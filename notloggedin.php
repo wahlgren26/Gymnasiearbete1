@@ -86,24 +86,7 @@
                 Sidebar Bootstrap 5
             </h1>
 
-            <form action="" method="GET">
-                <label for="fornamn">Förnamn:</label><br>
-                <input type="text" id="fornamn" name="fornamn"><br><br>
 
-                <label for="efternamn">Efternamn:</label><br>
-                <input type="text" id="efternamn" name="efternamn"><br><br>
-
-                <label for="num1">Nummer 1:</label><br>
-                <input type="number" id="num1" name="num1"><br><br>
-
-                <label for="num2">Nummer 2:</label><br>
-                <input type="number" id="num2" name="num2"><br><br>
-
-                <label for="num3">Nummer 3:</label><br>
-                <input type="number" id="num3" name="num3"><br><br>
-
-                <input type="submit" value="Testa">
-            </form>
         </div>
     </div>
 </div>
