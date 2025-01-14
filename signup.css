@@ -1,4 +1,3 @@
-/* From Uiverse.io by Yaya12085 */
 .form {
     display: flex;
     flex-direction: column;
@@ -74,8 +73,9 @@
     width: 100%;
     padding: 10px 10px 20px 10px;
     outline: 0;
-    border: 1px solid rgba(105, 105, 105, 0.397);
+    border: 1px solid grey;
     border-radius: 10px;
+    background-color: #f9f9f9;
 }
 
 .form label .input + span {
@@ -88,12 +88,15 @@
     transition: 0.3s ease;
 }
 
-.form label .input:placeholder-shown + span {
+.form label .input:empty + span {
     top: 15px;
     font-size: 0.9em;
+    color: grey;
 }
 
-.form label .input:focus + span,.form label .input:valid + span {
+.form label .input:focus + span,
+.form label .input:valid + span,
+.form label .input:not(:empty) + span {
     top: 30px;
     font-size: 0.7em;
     font-weight: 600;
@@ -156,11 +159,19 @@ html, body {
     cursor: pointer;
     text-align: left;
     display: block;
-    padding: 0;
-    align-self: flex-start; /* Ser till att knappen ligger på vänster sida */
+
 }
 
 .return-btn:hover {
     text-decoration: underline;
-    color: #55739A; /* Endast färgändring vid hovring */
+    color: #55739A;
+}
+
+.form label .input:invalid + span {
+    color: red;
+}
+
+/* Ta bort röd färg vid tomma fält */
+.form label .input:not(:focus):not(:placeholder-shown):invalid + span {
+    color: grey;
 }
