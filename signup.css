@@ -88,22 +88,23 @@
     transition: 0.3s ease;
 }
 
-.form label .input:empty + span {
-    top: 15px;
-    font-size: 0.9em;
-    color: grey;
-}
-
-.form label .input:focus + span,
-.form label .input:valid + span,
-.form label .input:not(:empty) + span {
+.form label .input:not(:placeholder-shown) + span,
+.form label .input:focus + span {
     top: 30px;
     font-size: 0.7em;
     font-weight: 600;
 }
 
-.form label .input:valid + span {
+.form label .input:valid:not(:placeholder-shown) + span {
     color: green;
+}
+
+.form label .input:invalid:not(:placeholder-shown) + span {
+    color: red;
+}
+
+.form label .input:invalid + span {
+    color: grey;
 }
 
 .submit {
@@ -167,11 +168,32 @@ html, body {
     color: #55739A;
 }
 
-.form label .input:invalid + span {
-    color: red;
+.submit.loading {
+    position: relative;
+    color: transparent;
 }
 
-/* Ta bort röd färg vid tomma fält */
-.form label .input:not(:focus):not(:placeholder-shown):invalid + span {
-    color: grey;
+.submit.loading::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    border: 4px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: button-loading-spinner 1s ease infinite;
+}
+
+@keyframes button-loading-spinner {
+    from {
+        transform: rotate(0turn);
+    }
+    to {
+        transform: rotate(1turn);
+    }
 }
