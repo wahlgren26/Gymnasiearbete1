@@ -30,7 +30,7 @@
             
             <button class="submit">Sign In</button>
             <p class="signin">Don't have an account? <a href="signup.php">Sign up</a></p>
-            <button type="button" class="return-btn" onclick="history.back()">&lt; Return</button>
+            <button type="button" class="return-btn" onclick="window.location.href='../';">&lt; Return</button>
         </form>
     </div>
 </center>
