@@ -2,11 +2,13 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    width: 100%;
     max-width: 350px;
     background-color: #fff;
     padding: 20px;
     border-radius: 20px;
     position: relative;
+    margin: auto;
 }
 
 .title {
@@ -134,22 +136,18 @@
     }
 }
 
-/* Anpassa hela sidan */
-html, body {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f2f2f2;
-}
-
 .container {
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+html, body {
     height: 100%;
-    width: 100%;
+    margin: 0;
+    background-color: #f2f2f2;
 }
 
 .return-btn {
@@ -160,7 +158,6 @@ html, body {
     cursor: pointer;
     text-align: left;
     display: block;
-
 }
 
 .return-btn:hover {
@@ -196,4 +193,4 @@ html, body {
     to {
         transform: rotate(1turn);
     }
-}
+} 
