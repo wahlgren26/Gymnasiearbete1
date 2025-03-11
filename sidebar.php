@@ -10,72 +10,58 @@
         </div>
         <ul class="sidebar-nav">
             <li class="sidebar-item">
-                <a href="profile.php" class="sidebar-link">
+                <a href="#" class="sidebar-link">
                     <i class="lni lni-user"></i>
                     <span>Profile</span>
                 </a>
             </li>
             <li class="sidebar-item">
                 <a href="#" class="sidebar-link">
-                    <i class="lni lni-agenda"></i>
-                    <span>Task</span>
+                    <i class="lni lni-dumbbell"></i>
+                    <span>Exercise database</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <i class="lni lni-calendar"></i>
+                    <span>Schedules</span>
                 </a>
             </li>
             <li class="sidebar-item">
                 <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
                    data-bs-target="#auth" aria-expanded="false" aria-controls="auth">
-                    <i class="lni lni-protection"></i>
-                    <span>Auth</span>
+                    <i class="lni lni-bar-chart"></i>
+                    <span>Goals & Progress</span>
                 </a>
                 <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
                     <li class="sidebar-item">
-                        <a href="#" class="sidebar-link">Login</a>
+                        <a href="#" class="sidebar-link">Choose Goals</a>
                     </li>
                     <li class="sidebar-item">
-                        <a href="#" class="sidebar-link">Register</a>
+                        <a href="#" class="sidebar-link">Progress Pictures</a>
                     </li>
-                </ul>
-            </li>
-            <li class="sidebar-item">
-                <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-                   data-bs-target="#multi" aria-expanded="false" aria-controls="multi">
-                    <i class="lni lni-layout"></i>
-                    <span>Multi Level</span>
-                </a>
-                <ul id="multi" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
                     <li class="sidebar-item">
-                        <a href="#" class="sidebar-link collapsed" data-bs-toggle="collapse"
-                           data-bs-target="#multi-two" aria-expanded="false" aria-controls="multi-two">
-                            Two Links
-                        </a>
-                        <ul id="multi-two" class="sidebar-dropdown list-unstyled collapse">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Link 1</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Link 2</a>
-                            </li>
-                        </ul>
+                        <a href="#" class="sidebar-link">Weight Notes</a>
                     </li>
                 </ul>
             </li>
             <li class="sidebar-item">
                 <a href="#" class="sidebar-link">
-                    <i class="lni lni-popup"></i>
-                    <span>Notification</span>
+                    <i class="lni lni-music"></i>
+                    <span>Music & Motivation</span>
                 </a>
             </li>
             <li class="sidebar-item">
                 <a href="#" class="sidebar-link">
-                    <i class="lni lni-cog"></i>
-                    <span>Setting</span>
+                    <i class="lni lni-question-circle"></i>
+                    <span>FAQ</span>
                 </a>
             </li>
         </ul>
         <div class="sidebar-footer">
             <a href="#" class="sidebar-link">
-                <i class="lni lni-exit"></i>
-                <span>Logout</span>
+                <i class="lni lni-enter"></i>
+                <span>Login / Register</span>
             </a>
         </div>
     </aside>
