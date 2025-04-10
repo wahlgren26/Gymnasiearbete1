@@ -19,12 +19,15 @@
     <div class="main p-3">
         <div class="profile-container">
             <div class="profile-header">
-                <div class="profile-top">
-                    <img src="MSNexample.png" alt="Profilbild" class="profile-image">
-                    <div class="profile-info">
-                        <h2>Anders Andersson</h2>
-                        <div class="member-since">Medlem sedan: Januari 2024</div>
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="profile-top">
+                        <img src="MSNexample.png" alt="Profilbild" class="profile-image">
+                        <div class="profile-info">
+                            <h2>Anders Andersson</h2>
+                            <div class="member-since">Medlem sedan: Januari 2024</div>
+                        </div>
                     </div>
+                    <a href="editprofile.php" class="btn btn-primary"><i class="lni lni-pencil"></i> Redigera profil</a>
                 </div>
                 <div class="profile-description">
                     Tränat aktivt i 3 år med fokus på styrketräning. Gillar att pusha mig själv till nya nivåer 
