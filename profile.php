@@ -17,62 +17,60 @@
     <?php include 'sidebar.php'; ?>
     
     <div class="main p-3">
-        <div class="container">
-            <div class="profile-container">
-                <div class="profile-header">
-                    <div class="profile-top">
-                        <img src="MSNexample.png" alt="Profilbild" class="profile-image">
-                        <div class="profile-info">
-                            <h2>Anders Andersson</h2>
-                            <div class="member-since">Medlem sedan: Januari 2024</div>
-                        </div>
-                    </div>
-                    <div class="profile-description">
-                        Tränat aktivt i 3 år med fokus på styrketräning. Gillar att pusha mig själv till nya nivåer 
-                        och hjälpa andra nå sina träningsmål. Specialiserad inom powerlifting och 
-                        funktionell träning.
+        <div class="profile-container">
+            <div class="profile-header">
+                <div class="profile-top">
+                    <img src="MSNexample.png" alt="Profilbild" class="profile-image">
+                    <div class="profile-info">
+                        <h2>Anders Andersson</h2>
+                        <div class="member-since">Medlem sedan: Januari 2024</div>
                     </div>
                 </div>
-                
+                <div class="profile-description">
+                    Tränat aktivt i 3 år med fokus på styrketräning. Gillar att pusha mig själv till nya nivåer 
+                    och hjälpa andra nå sina träningsmål. Specialiserad inom powerlifting och 
+                    funktionell träning.
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-6 col-md-12 mb-3">
+                    <div class="stats-card">
+                        <h4>Personlig Information</h4>
+                        <hr>
+                        <p><strong>Ålder:</strong> 28 år</p>
+                        <p><strong>Längd:</strong> 180 cm</p>
+                        <p><strong>Vikt:</strong> 75 kg</p>
+                        <p><strong>Mål:</strong> Styrkeökning och muskeltillväxt</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-12 mb-3">
+                    <div class="stats-card">
+                        <h4>Personbästa</h4>
+                        <hr>
+                        <p><strong>Bänkpress:</strong> 100 kg</p>
+                        <p><strong>Marklyft:</strong> 160 kg</p>
+                        <p><strong>Knäböj:</strong> 120 kg</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-card">
+                <h4>Träningsstatistik</h4>
+                <hr>
                 <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <div class="stats-card">
-                            <h4>Personlig Information</h4>
-                            <hr>
-                            <p><strong>Ålder:</strong> 28 år</p>
-                            <p><strong>Längd:</strong> 180 cm</p>
-                            <p><strong>Vikt:</strong> 75 kg</p>
-                            <p><strong>Mål:</strong> Styrkeökning och muskeltillväxt</p>
-                        </div>
+                    <div class="col-md-4 col-sm-12 text-center mb-3 mb-md-0">
+                        <h5>Pass denna månad</h5>
+                        <p class="h2">12</p>
                     </div>
-
-                    <div class="col-md-6 mb-3">
-                        <div class="stats-card">
-                            <h4>Personbästa</h4>
-                            <hr>
-                            <p><strong>Bänkpress:</strong> 100 kg</p>
-                            <p><strong>Marklyft:</strong> 160 kg</p>
-                            <p><strong>Knäböj:</strong> 120 kg</p>
-                        </div>
+                    <div class="col-md-4 col-sm-12 text-center mb-3 mb-md-0">
+                        <h5>Träningstimmar</h5>
+                        <p class="h2">18</p>
                     </div>
-                </div>
-
-                <div class="stats-card">
-                    <h4>Träningsstatistik</h4>
-                    <hr>
-                    <div class="row">
-                        <div class="col-md-4 text-center">
-                            <h5>Pass denna månad</h5>
-                            <p class="h2">12</p>
-                        </div>
-                        <div class="col-md-4 text-center">
-                            <h5>Träningstimmar</h5>
-                            <p class="h2">18</p>
-                        </div>
-                        <div class="col-md-4 text-center">
-                            <h5>Aktiva program</h5>
-                            <p class="h2">2</p>
-                        </div>
+                    <div class="col-md-4 col-sm-12 text-center">
+                        <h5>Aktiva program</h5>
+                        <p class="h2">2</p>
                     </div>
                 </div>
             </div>
