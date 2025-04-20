@@ -66,7 +66,7 @@
     <div class="sidebar-footer">
         <?php
         // Check if user is logged in
-        session_start();
+        // Session is started in session_handler.php which is included in each page
         if(isset($_SESSION['user_id'])) {
             // User is logged in, show logout
             echo '<a href="auth/logout.php" class="sidebar-link">';

@@ -1,3 +1,7 @@
+<?php
+// Include session handler at the very beginning
+include 'session_handler.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,21 +39,10 @@
                                     <div class="progress mb-3" style="height: 8px;">
                                         <div class="progress-bar bg-primary" role="progressbar" style="width: 65%"></div>
                                     </div>
-                                    <div class="mb-4">
-                                        <div class="d-flex justify-content-between mb-2">
-                                            <span>Bench Press</span>
-                                            <span class="strength-value" style="cursor: pointer">80/100 kg</span>
-                                        </div>
-                                        <div class="d-flex justify-content-between mb-2">
-                                            <span>Squat</span>
-                                            <span>120/150 kg</span>
-                                        </div>
-                                        <div class="d-flex justify-content-between">
-                                            <span>Deadlift</span>
-                                            <span>140/180 kg</span>
-                                        </div>
+                                    <div class="mb-4" id="strengthGoalsContainer">
+                                        <!-- Will be populated by JavaScript -->
                                     </div>
-                                    <button class="btn btn-outline-primary btn-sm">
+                                    <button class="btn btn-outline-primary btn-sm" id="addStrengthGoal">
                                         <i class="lni lni-plus me-1"></i>Add Goal
                                     </button>
                                 </div>
@@ -73,8 +66,8 @@
                                         <small class="text-success weight-remaining" id="weightRemaining">Calculating...</small>
                                     </div>
                                     <div class="d-flex gap-2">
-                                        <button class="btn btn-outline-success btn-sm weight-update flex-grow-1">
-                                            <i class="lni lni-pencil me-1"></i>Update Weight
+                                        <button class="btn btn-outline-success btn-sm weight-update flex-grow-1" id="updateWeightGoal">
+                                            <i class="lni lni-pencil me-1"></i>Update Goal
                                         </button>
                                         <a href="vikt.php" class="btn btn-outline-primary btn-sm flex-grow-1">
                                             <i class="lni lni-graph me-1"></i>View History
@@ -95,22 +88,11 @@
                                     <div class="progress mb-3" style="height: 8px;">
                                         <div class="progress-bar bg-info" role="progressbar" style="width: 45%"></div>
                                     </div>
-                                    <div class="mb-4">
-                                        <div class="d-flex justify-content-between mb-2">
-                                            <span>Chest</span>
-                                            <span class="measurement-value" style="cursor: pointer">100/105 cm</span>
-                                        </div>
-                                        <div class="d-flex justify-content-between mb-2">
-                                            <span>Arms</span>
-                                            <span>35/40 cm</span>
-                                        </div>
-                                        <div class="d-flex justify-content-between">
-                                            <span>Waist</span>
-                                            <span>85/80 cm</span>
-                                        </div>
+                                    <div class="mb-4" id="measurementGoalsContainer">
+                                        <!-- Will be populated by JavaScript -->
                                     </div>
-                                    <button class="btn btn-outline-info btn-sm">
-                                        <i class="lni lni-pencil me-1"></i>Update Measurements
+                                    <button class="btn btn-outline-info btn-sm" id="addMeasurementGoal">
+                                        <i class="lni lni-plus me-1"></i>Add Measurement
                                     </button>
                                 </div>
                             </div>
@@ -133,10 +115,16 @@
                                     <h3 class="h5 mb-3">Add Goal Note</h3>
                                     <form id="noteForm">
                                         <div class="mb-3">
-                                            <input type="date" class="form-control">
+                                            <input type="date" class="form-control" id="noteDate">
                                         </div>
                                         <div class="mb-3">
-                                            <textarea class="form-control" rows="3" placeholder="Write your progress note here..."></textarea>
+                                            <textarea class="form-control" rows="3" placeholder="Write your progress note here..." id="noteText"></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <select class="form-select" id="noteType">
+                                                <option value="note">Note</option>
+                                                <option value="achievement">Achievement</option>
+                                            </select>
                                         </div>
                                         <button type="submit" class="btn btn-primary">Save Note</button>
                                     </form>
@@ -147,21 +135,8 @@
                             <div class="card border-0 shadow-sm">
                                 <div class="card-body">
                                     <h3 class="h5 mb-3">Recent Notes</h3>
-                                    <div class="timeline">
-                                        <div class="timeline-item mb-3 pb-3 border-bottom">
-                                            <div class="d-flex justify-content-between mb-1">
-                                                <strong>March 15, 2024</strong>
-                                                <span class="badge bg-success">Achievement</span>
-                                            </div>
-                                            <p class="text-muted mb-0">Hit new PR on bench press: 80kg!</p>
-                                        </div>
-                                        <div class="timeline-item mb-3 pb-3 border-bottom">
-                                            <div class="d-flex justify-content-between mb-1">
-                                                <strong>March 10, 2024</strong>
-                                                <span class="badge bg-primary">Note</span>
-                                            </div>
-                                            <p class="text-muted mb-0">Consistency in diet is improving. Keeping up with meal prep.</p>
-                                        </div>
+                                    <div class="timeline" id="notesTimeline">
+                                        <!-- Will be populated by JavaScript -->
                                     </div>
                                 </div>
                             </div>
@@ -172,147 +147,201 @@
         </div>
     </div>
 
+    <!-- Modals -->
+    <!-- Add Strength Goal Modal -->
+    <div class="modal fade" id="strengthGoalModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Strength Goal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="strengthGoalForm">
+                        <div class="mb-3">
+                            <label for="strengthExercise" class="form-label">Exercise</label>
+                            <input type="text" class="form-control" id="strengthExercise" placeholder="e.g., Bench Press" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="strengthCurrent" class="form-label">Current Weight</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="strengthCurrent" required>
+                                <span class="input-group-text">kg</span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="strengthTarget" class="form-label">Target Weight</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="strengthTarget" required>
+                                <span class="input-group-text">kg</span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveStrengthGoal">Save Goal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Strength Goal Modal -->
+    <div class="modal fade" id="editStrengthGoalModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Strength Progress</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editStrengthGoalForm">
+                        <input type="hidden" id="editStrengthGoalId">
+                        <div class="mb-3">
+                            <label for="editStrengthCurrent" class="form-label">Current Weight</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="editStrengthCurrent" required>
+                                <span class="input-group-text">kg</span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editStrengthTarget" class="form-label">Target Weight</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="editStrengthTarget" required>
+                                <span class="input-group-text">kg</span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger me-auto" id="deleteStrengthGoal">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="updateStrengthGoal">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Measurement Goal Modal -->
+    <div class="modal fade" id="measurementGoalModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Measurement Goal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="measurementGoalForm">
+                        <div class="mb-3">
+                            <label for="measurementName" class="form-label">Measurement</label>
+                            <input type="text" class="form-control" id="measurementName" placeholder="e.g., Chest, Arms, Waist" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="measurementCurrent" class="form-label">Current</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="measurementCurrent" required>
+                                <span class="input-group-text">cm</span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="measurementTarget" class="form-label">Target</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="measurementTarget" required>
+                                <span class="input-group-text">cm</span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveMeasurementGoal">Save Goal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Measurement Goal Modal -->
+    <div class="modal fade" id="editMeasurementGoalModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Measurement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editMeasurementGoalForm">
+                        <input type="hidden" id="editMeasurementGoalId">
+                        <div class="mb-3">
+                            <label for="editMeasurementCurrent" class="form-label">Current</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="editMeasurementCurrent" required>
+                                <span class="input-group-text">cm</span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editMeasurementTarget" class="form-label">Target</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="editMeasurementTarget" required>
+                                <span class="input-group-text">cm</span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger me-auto" id="deleteMeasurementGoal">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="updateMeasurementGoal">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weight Goal Modal -->
+    <div class="modal fade" id="weightGoalModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Weight Goal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="weightGoalForm">
+                        <div class="mb-3">
+                            <label for="targetWeightInput" class="form-label">Target Weight</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="targetWeightInput" required>
+                                <span class="input-group-text">kg</span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveWeightGoal">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="lni lni-checkmark me-2"></i>
+                    <span id="toastMessage">Operation successful!</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
     <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
     <script src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // Initialize progress chart
-        const ctx = document.getElementById('progressChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                datasets: [{
-                    label: 'Workout Completion',
-                    data: [100, 80, 90, 85, 95, 75, 88],
-                    borderColor: '#0d6efd',
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100
-                    }
-                }
-            }
-        });
-
-        // Handle strength goals updates
-        document.querySelectorAll('.strength-value').forEach(value => {
-            value.addEventListener('click', function() {
-                const currentValue = this.textContent.split('/')[0];
-                const targetValue = this.textContent.split('/')[1];
-                const newValue = prompt('Enter new current value (kg):', currentValue);
-                
-                if (newValue && !isNaN(newValue)) {
-                    this.textContent = `${newValue}/${targetValue}`;
-                    updateProgressBar(this.closest('.card').querySelector('.progress-bar'), 
-                        (newValue / parseInt(targetValue)) * 100);
-                }
-            });
-        });
-
-        // Handle measurements updates
-        document.querySelectorAll('.measurement-value').forEach(value => {
-            value.addEventListener('click', function() {
-                const currentValue = this.textContent.split('/')[0];
-                const targetValue = this.textContent.split('/')[1];
-                const newValue = prompt('Enter new measurement (cm):', currentValue);
-                
-                if (newValue && !isNaN(newValue)) {
-                    this.textContent = `${newValue}/${targetValue}`;
-                    updateProgressBar(this.closest('.card').querySelector('.progress-bar'), 
-                        (newValue / parseInt(targetValue)) * 100);
-                }
-            });
-        });
-
-        // Handle notes submission
-        document.getElementById('noteForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const date = this.querySelector('input[type="date"]').value;
-            const note = this.querySelector('textarea').value;
-            
-            if (date && note) {
-                const noteHTML = `
-                    <div class="timeline-item mb-3 pb-3 border-bottom">
-                        <div class="d-flex justify-content-between mb-1">
-                            <strong>${new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</strong>
-                            <span class="badge bg-primary">Note</span>
-                        </div>
-                        <p class="text-muted mb-0">${note}</p>
-                    </div>
-                `;
-                
-                document.querySelector('.timeline').insertAdjacentHTML('afterbegin', noteHTML);
-                this.reset();
-            }
-        });
-
-        // Helper function to update progress bars
-        function updateProgressBar(progressBar, percentage) {
-            progressBar.style.width = `${Math.min(100, Math.max(0, percentage))}%`;
-        }
-
-        // Function to update weight display
-        function updateWeightDisplay() {
-            // Get the latest weight from localStorage
-            const weightData = JSON.parse(localStorage.getItem('weightData') || '[]');
-            const targetWeight = localStorage.getItem('targetWeight') || 70; // Default target weight
-            
-            if (weightData.length > 0) {
-                const currentWeight = weightData[weightData.length - 1].weight;
-                const remaining = Math.abs(currentWeight - targetWeight);
-                
-                // Update the display
-                document.getElementById('currentWeight').textContent = `${currentWeight} kg`;
-                document.getElementById('targetWeight').textContent = `Target: ${targetWeight} kg`;
-                document.getElementById('weightRemaining').textContent = `${remaining} kg to go!`;
-                
-                // Update progress bar
-                const progressBar = document.querySelector('.progress-bar');
-                const progress = (1 - (remaining / 10)) * 100; // Assuming 10kg is max difference
-                updateProgressBar(progressBar, progress);
-            }
-        }
-
-        // Handle weight updates
-        document.querySelector('.weight-update').addEventListener('click', function() {
-            const currentWeight = parseFloat(document.getElementById('currentWeight').textContent);
-            const newWeight = prompt('Enter your current weight (kg):', currentWeight);
-            
-            if (newWeight && !isNaN(newWeight)) {
-                // Save to localStorage
-                const weightData = JSON.parse(localStorage.getItem('weightData') || '[]');
-                weightData.push({
-                    date: new Date().toISOString(),
-                    weight: parseFloat(newWeight)
-                });
-                localStorage.setItem('weightData', JSON.stringify(weightData));
-                
-                // Update display
-                updateWeightDisplay();
-            }
-        });
-
-        // Initial load
-        document.addEventListener('DOMContentLoaded', function() {
-            updateWeightDisplay();
-            
-            // Listen for weight updates from other pages
-            window.addEventListener('storage', function(e) {
-                if (e.key === 'weightData') {
-                    updateWeightDisplay();
-                }
-            });
-        });
-    </script>
+    <script src="js/goals.js"></script>
 </body>
 </html>

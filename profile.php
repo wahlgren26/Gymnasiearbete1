@@ -1,3 +1,7 @@
+<?php
+// Include session handler at the very beginning
+include 'session_handler.php';
+?>
 <!DOCTYPE html>
 <html lang="sv">
 
