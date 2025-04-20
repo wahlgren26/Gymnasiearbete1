@@ -9,7 +9,7 @@ include 'session_handler.php';
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GymLog - Din Personliga Träningsdagbok</title>
+    <title>GymLog - Your Personal Fitness Journal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
     <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -113,11 +113,11 @@ include 'session_handler.php';
                 <div class="container">
                     <div class="row align-items-center">
                         <div class="col-lg-7 hero-content">
-                            <h1 class="display-4 fw-bold mb-4">Nå Dina Träningsmål med GymLog</h1>
-                            <p class="lead mb-4">Din personliga träningsdagbok som hjälper dig att spåra, analysera och förbättra dina träningsresultat.</p>
+                            <h1 class="display-4 fw-bold mb-4">Achieve Your Fitness Goals with GymLog</h1>
+                            <p class="lead mb-4">Your personal fitness journal that helps you track, analyze, and improve your workout results.</p>
                             <div class="d-flex flex-wrap gap-2">
-                                <a href="day.php" class="btn btn-light btn-lg px-4">Börja Träna</a>
-                                <a href="goal.php" class="btn btn-outline-light btn-lg px-4">Sätt Dina Mål</a>
+                                <a href="day.php" class="btn btn-light btn-lg px-4">Start Training</a>
+                                <a href="goal.php" class="btn btn-outline-light btn-lg px-4">Set Your Goals</a>
                             </div>
                         </div>
                         <div class="col-lg-5 d-none d-lg-block">
@@ -133,25 +133,25 @@ include 'session_handler.php';
                     <div class="col-md-3 col-6">
                         <div class="card stat-card shadow-sm h-100 p-3">
                             <div class="stat-number">1000+</div>
-                            <div class="text-muted">Nöjda Användare</div>
+                            <div class="text-muted">Satisfied Users</div>
                         </div>
                     </div>
                     <div class="col-md-3 col-6">
                         <div class="card stat-card shadow-sm h-100 p-3">
                             <div class="stat-number">150+</div>
-                            <div class="text-muted">Träningsövningar</div>
+                            <div class="text-muted">Exercises</div>
                         </div>
                     </div>
                     <div class="col-md-3 col-6">
                         <div class="card stat-card shadow-sm h-100 p-3">
                             <div class="stat-number">98%</div>
-                            <div class="text-muted">Måluppfyllelse</div>
+                            <div class="text-muted">Goal Achievement</div>
                         </div>
                     </div>
                     <div class="col-md-3 col-6">
                         <div class="card stat-card shadow-sm h-100 p-3">
                             <div class="stat-number">24/7</div>
-                            <div class="text-muted">Tillgänglighet</div>
+                            <div class="text-muted">Availability</div>
                         </div>
                     </div>
                 </div>
@@ -160,8 +160,8 @@ include 'session_handler.php';
             <!-- Features Section -->
             <div class="container mb-5">
                 <div class="text-center mb-5">
-                    <h2 class="h1 mb-3">Vad GymLog Erbjuder</h2>
-                    <p class="lead text-muted">Allt du behöver för att optimera din träning på ett ställe</p>
+                    <h2 class="h1 mb-3">What GymLog Offers</h2>
+                    <p class="lead text-muted">Everything you need to optimize your training in one place</p>
                 </div>
                 
                 <div class="row g-4">
@@ -170,8 +170,8 @@ include 'session_handler.php';
                             <div class="feature-icon">
                                 <i class="lni lni-calendar"></i>
                             </div>
-                            <h3 class="h4 mb-3">Träningsschema</h3>
-                            <p class="text-muted mb-0">Planera dina träningspass och skapa ett schema som passar din livsstil.</p>
+                            <h3 class="h4 mb-3">Training Schedule</h3>
+                            <p class="text-muted mb-0">Plan your workouts and create a schedule that fits your lifestyle.</p>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6">
@@ -179,8 +179,8 @@ include 'session_handler.php';
                             <div class="feature-icon">
                                 <i class="lni lni-stats-up"></i>
                             </div>
-                            <h3 class="h4 mb-3">Spåra Framsteg</h3>
-                            <p class="text-muted mb-0">Håll koll på dina framsteg med detaljerade grafer och statistik.</p>
+                            <h3 class="h4 mb-3">Track Progress</h3>
+                            <p class="text-muted mb-0">Keep track of your progress with detailed graphs and statistics.</p>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6">
@@ -188,8 +188,8 @@ include 'session_handler.php';
                             <div class="feature-icon">
                                 <i class="lni lni-target"></i>
                             </div>
-                            <h3 class="h4 mb-3">Målsättning</h3>
-                            <p class="text-muted mb-0">Sätt personliga mål och följ din väg mot att uppnå dem.</p>
+                            <h3 class="h4 mb-3">Goal Setting</h3>
+                            <p class="text-muted mb-0">Set personal goals and follow your path to achieving them.</p>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6">
@@ -197,8 +197,8 @@ include 'session_handler.php';
                             <div class="feature-icon">
                                 <i class="lni lni-restaurant"></i>
                             </div>
-                            <h3 class="h4 mb-3">Nutritionsråd</h3>
-                            <p class="text-muted mb-0">Få hjälp med att optimera ditt näringsintag för bästa resultat.</p>
+                            <h3 class="h4 mb-3">Nutrition Advice</h3>
+                            <p class="text-muted mb-0">Get help optimizing your nutritional intake for best results.</p>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6">
@@ -206,8 +206,8 @@ include 'session_handler.php';
                             <div class="feature-icon">
                                 <i class="lni lni-weight"></i>
                             </div>
-                            <h3 class="h4 mb-3">Vikthantering</h3>
-                            <p class="text-muted mb-0">Spåra din vikt och kroppssammansättning för att nå dina målsättningar.</p>
+                            <h3 class="h4 mb-3">Weight Management</h3>
+                            <p class="text-muted mb-0">Track your weight and body composition to reach your targets.</p>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6">
@@ -215,8 +215,8 @@ include 'session_handler.php';
                             <div class="feature-icon">
                                 <i class="lni lni-music"></i>
                             </div>
-                            <h3 class="h4 mb-3">Träningsmusik</h3>
-                            <p class="text-muted mb-0">Spela motiverande musik som hjälper dig att prestera bättre.</p>
+                            <h3 class="h4 mb-3">Workout Music</h3>
+                            <p class="text-muted mb-0">Play motivating music that helps you perform better.</p>
                         </div>
                     </div>
                 </div>
@@ -225,8 +225,8 @@ include 'session_handler.php';
             <!-- Testimonials -->
             <div class="container mb-5">
                 <div class="text-center mb-5">
-                    <h2 class="h1 mb-3">Vad Våra Användare Säger</h2>
-                    <p class="lead text-muted">Framgångshistorier från vårt community</p>
+                    <h2 class="h1 mb-3">What Our Users Say</h2>
+                    <p class="lead text-muted">Success stories from our community</p>
                 </div>
                 
                 <div class="row g-4">
@@ -236,11 +236,11 @@ include 'session_handler.php';
                                 <div class="d-flex align-items-center mb-4">
                                     <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User Avatar" class="testimonial-img me-3">
                                     <div>
-                                        <h4 class="h5 mb-0">Erik Johansson</h4>
-                                        <p class="text-muted small mb-0">Använder GymLog i 8 månader</p>
+                                        <h4 class="h5 mb-0">Eric Johnson</h4>
+                                        <p class="text-muted small mb-0">Using GymLog for 8 months</p>
                                     </div>
                                 </div>
-                                <p class="mb-0">"GymLog har revolutionerat mitt sätt att träna. Jag har gått ner 15 kg och byggt den muskelmassa jag alltid drömt om. Rekommenderas starkt!"</p>
+                                <p class="mb-0">"GymLog has revolutionized the way I train. I've lost 15 kg and built the muscle mass I've always dreamed of. Highly recommended!"</p>
                             </div>
                         </div>
                     </div>
@@ -250,11 +250,11 @@ include 'session_handler.php';
                                 <div class="d-flex align-items-center mb-4">
                                     <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User Avatar" class="testimonial-img me-3">
                                     <div>
-                                        <h4 class="h5 mb-0">Sofia Lindberg</h4>
-                                        <p class="text-muted small mb-0">Använder GymLog i 1 år</p>
+                                        <h4 class="h5 mb-0">Sophie Bennett</h4>
+                                        <p class="text-muted small mb-0">Using GymLog for 1 year</p>
                                     </div>
                                 </div>
-                                <p class="mb-0">"Att kunna spåra min framgång visuellt har gett mig en ökad motivation. Jag har äntligen nått mitt mål att springa en halvmaraton tack vare den strukturerade träningsplanen."</p>
+                                <p class="mb-0">"Being able to track my progress visually has given me increased motivation. I finally reached my goal of running a half marathon thanks to the structured training plan."</p>
                             </div>
                         </div>
                     </div>
@@ -264,11 +264,11 @@ include 'session_handler.php';
                                 <div class="d-flex align-items-center mb-4">
                                     <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="User Avatar" class="testimonial-img me-3">
                                     <div>
-                                        <h4 class="h5 mb-0">Marcus Ek</h4>
-                                        <p class="text-muted small mb-0">Använder GymLog i 6 månader</p>
+                                        <h4 class="h5 mb-0">Marcus Edwards</h4>
+                                        <p class="text-muted small mb-0">Using GymLog for 6 months</p>
                                     </div>
                                 </div>
-                                <p class="mb-0">"Som nybörjare var jag överväldigad av all träningsinformation. GymLog gjorde allt enkelt att förstå och jag känner mig trygg i mitt träningsupplägg nu."</p>
+                                <p class="mb-0">"As a beginner, I was overwhelmed by all the fitness information. GymLog made everything easy to understand and I now feel confident in my training approach."</p>
                             </div>
                         </div>
                     </div>
@@ -278,11 +278,11 @@ include 'session_handler.php';
             <!-- CTA Section -->
             <div class="cta-section p-5 mb-5">
                 <div class="container text-center">
-                    <h2 class="display-5 fw-bold mb-4">Redo att Börja Din Träningsresa?</h2>
-                    <p class="lead mb-4">Registrera dig idag och ta det första steget mot en starkare, hälsosammare framtid.</p>
+                    <h2 class="display-5 fw-bold mb-4">Ready to Start Your Fitness Journey?</h2>
+                    <p class="lead mb-4">Register today and take the first step toward a stronger, healthier future.</p>
                     <div class="d-flex justify-content-center gap-3">
-                        <a href="auth/signup.php" class="btn btn-light btn-lg px-4">Skapa Konto</a>
-                        <a href="auth/signin.php" class="btn btn-outline-light btn-lg px-4">Logga In</a>
+                        <a href="auth/signup.php" class="btn btn-light btn-lg px-4">Create Account</a>
+                        <a href="auth/signin.php" class="btn btn-outline-light btn-lg px-4">Log In</a>
                     </div>
                 </div>
             </div>
@@ -290,35 +290,35 @@ include 'session_handler.php';
             <!-- App Screenshots Section -->
             <div class="container mb-5">
                 <div class="text-center mb-5">
-                    <h2 class="h1 mb-3">Se GymLog i Aktion</h2>
-                    <p class="lead text-muted">Upptäck funktionerna som gör GymLog till det perfekta verktyget för din träning</p>
+                    <h2 class="h1 mb-3">See GymLog in Action</h2>
+                    <p class="lead text-muted">Discover the features that make GymLog the perfect tool for your fitness journey</p>
                 </div>
                 
                 <div class="row g-4">
                     <div class="col-md-4">
                         <div class="card shadow-sm h-100">
-                            <img src="https://via.placeholder.com/600x400/f8f9fa/212529?text=Träningsschema" class="card-img-top" alt="App Screenshot">
+                            <img src="https://via.placeholder.com/600x400/f8f9fa/212529?text=Training+Schedule" class="card-img-top" alt="App Screenshot">
                             <div class="card-body">
-                                <h5 class="card-title">Träningsschema</h5>
-                                <p class="card-text text-muted">Planera dina träningspass enkelt och smidigt.</p>
+                                <h5 class="card-title">Training Schedule</h5>
+                                <p class="card-text text-muted">Plan your workouts easily and efficiently.</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="card shadow-sm h-100">
-                            <img src="https://via.placeholder.com/600x400/f8f9fa/212529?text=Framstegsspårning" class="card-img-top" alt="App Screenshot">
+                            <img src="https://via.placeholder.com/600x400/f8f9fa/212529?text=Progress+Tracking" class="card-img-top" alt="App Screenshot">
                             <div class="card-body">
-                                <h5 class="card-title">Framstegsspårning</h5>
-                                <p class="card-text text-muted">Följ din utveckling med detaljerade statistik och grafer.</p>
+                                <h5 class="card-title">Progress Tracking</h5>
+                                <p class="card-text text-muted">Follow your development with detailed statistics and graphs.</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="card shadow-sm h-100">
-                            <img src="https://via.placeholder.com/600x400/f8f9fa/212529?text=Målsättning" class="card-img-top" alt="App Screenshot">
+                            <img src="https://via.placeholder.com/600x400/f8f9fa/212529?text=Goal+Setting" class="card-img-top" alt="App Screenshot">
                             <div class="card-body">
-                                <h5 class="card-title">Målsättning</h5>
-                                <p class="card-text text-muted">Sätt och uppnå dina personliga träningsmål.</p>
+                                <h5 class="card-title">Goal Setting</h5>
+                                <p class="card-text text-muted">Set and achieve your personal fitness goals.</p>
                             </div>
                         </div>
                     </div>
@@ -330,37 +330,25 @@ include 'session_handler.php';
                 <div class="row">
                     <div class="col-md-4 mb-4">
                         <h3 class="h5 mb-3">GymLog</h3>
-                        <p class="text-muted">Din personliga träningsdagbok för att spåra framsteg och uppnå dina mål.</p>
+                        <p class="text-muted">Your personal fitness journal for tracking progress and achieving your goals.</p>
                     </div>
-                    <div class="col-md-3 mb-4">
-                        <h3 class="h5 mb-3">Snabblänkar</h3>
+                    <div class="col-md-4 mb-4">
+                        <h3 class="h5 mb-3">Quick Links</h3>
                         <ul class="list-unstyled">
-                            <li class="mb-2"><a href="day.php" class="text-decoration-none text-muted">Träningsschema</a></li>
-                            <li class="mb-2"><a href="goal.php" class="text-decoration-none text-muted">Målsättning</a></li>
-                            <li class="mb-2"><a href="vikt.php" class="text-decoration-none text-muted">Vikthantering</a></li>
-                            <li class="mb-2"><a href="faq.php" class="text-decoration-none text-muted">Vanliga Frågor</a></li>
+                            <li class="mb-2"><a href="day.php" class="text-decoration-none text-muted">Training Schedule</a></li>
+                            <li class="mb-2"><a href="goal.php" class="text-decoration-none text-muted">Goal Setting</a></li>
+                            <li class="mb-2"><a href="vikt.php" class="text-decoration-none text-muted">Weight Management</a></li>
+                            <li class="mb-2"><a href="faq.php" class="text-decoration-none text-muted">FAQ</a></li>
                         </ul>
                     </div>
-                    <div class="col-md-3 mb-4">
-                        <h3 class="h5 mb-3">Följ Oss</h3>
-                        <div class="d-flex gap-3">
-                            <a href="#" class="text-muted fs-5"><i class="lni lni-facebook-original"></i></a>
-                            <a href="#" class="text-muted fs-5"><i class="lni lni-instagram-original"></i></a>
-                            <a href="#" class="text-muted fs-5"><i class="lni lni-twitter-original"></i></a>
-                            <a href="#" class="text-muted fs-5"><i class="lni lni-youtube"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-md-2 mb-4">
-                        <h3 class="h5 mb-3">Ladda Ner</h3>
-                        <div class="d-flex flex-column gap-2">
-                            <a href="#" class="btn btn-sm btn-outline-dark"><i class="lni lni-apple me-2"></i> App Store</a>
-                            <a href="#" class="btn btn-sm btn-outline-dark"><i class="lni lni-play-store me-2"></i> Google Play</a>
-                        </div>
+                    <div class="col-md-4 mb-4">
+                        <h3 class="h5 mb-3">Contact</h3>
+                        <p class="text-muted">Have questions or feedback? <br>Email us at: <a href="mailto:support@gymlog.com" class="text-decoration-none">support@gymlog.com</a></p>
                     </div>
                 </div>
                 <hr class="my-4">
                 <div class="text-center text-muted">
-                    <small>&copy; 2023 GymLog. Alla rättigheter förbehållna.</small>
+                    <small>&copy; 2025 GymLog. All rights reserved.</small>
                 </div>
             </footer>
         </div>
