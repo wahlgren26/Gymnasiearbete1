@@ -1,0 +1,15 @@
+/* FAQ specific styles */
+.accordion-item {
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.accordion-button {
+    border-radius: 10px !important;
+    padding: 1rem 1.5rem;
+}
+
+.accordion-body {
+    padding: 1.5rem;
+} 

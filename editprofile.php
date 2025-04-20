@@ -8,9 +8,9 @@
     <title>GymLog - Redigera Profil</title>
     <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="sidebarstyle.css">
-    <link rel="stylesheet" href="profile.css">
-    <link rel="stylesheet" href="editprofile.css">
+    <link rel="stylesheet" href="css/sidebarstyle.css">
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="css/editprofile.css">
 </head>
 
 <body>
