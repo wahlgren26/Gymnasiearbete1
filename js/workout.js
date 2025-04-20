@@ -141,14 +141,48 @@ function addSelectedExercise(day, bodyPart, selectElement) {
 }
 
 function addCustomExercise(day, bodyPart) {
-    const exerciseName = prompt("Enter exercise name:");
-    if (!exerciseName) return;
+    // Populate the modal with day and body part
+    document.getElementById('customExerciseDay').value = day;
+    document.getElementById('customExerciseBodyPart').value = bodyPart;
     
-    const exerciseDesc = prompt("Enter exercise description (optional):", "");
-    const exerciseLink = prompt("Enter exercise link (optional):", "#");
+    // Reset form fields
+    document.getElementById('customExerciseName').value = '';
+    document.getElementById('customExerciseDescription').value = '';
+    document.getElementById('customExerciseLink').value = '';
     
-    addExerciseToDay(day, bodyPart, exerciseName, exerciseDesc, exerciseLink);
+    // Show the modal
+    const customExerciseModal = new bootstrap.Modal(document.getElementById('customExerciseModal'));
+    customExerciseModal.show();
 }
+
+// Handle save button click for custom exercise
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('saveCustomExercise').addEventListener('click', function() {
+        const day = document.getElementById('customExerciseDay').value;
+        const bodyPart = document.getElementById('customExerciseBodyPart').value;
+        const exerciseName = document.getElementById('customExerciseName').value.trim();
+        const exerciseDesc = document.getElementById('customExerciseDescription').value.trim();
+        const exerciseLink = document.getElementById('customExerciseLink').value.trim() || '#';
+        
+        if (!exerciseName) {
+            // Highlight the name field if empty
+            document.getElementById('customExerciseName').classList.add('is-invalid');
+            return;
+        }
+        
+        // Add the exercise
+        addExerciseToDay(day, bodyPart, exerciseName, exerciseDesc, exerciseLink);
+        
+        // Hide the modal
+        const customExerciseModal = bootstrap.Modal.getInstance(document.getElementById('customExerciseModal'));
+        customExerciseModal.hide();
+    });
+    
+    // Remove invalid class when typing
+    document.getElementById('customExerciseName').addEventListener('input', function() {
+        this.classList.remove('is-invalid');
+    });
+});
 
 function showExerciseSelection(day) {
     document.querySelector(`#exercise-dropdowns-${day}`).style.display = 'block';

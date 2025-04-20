@@ -152,6 +152,50 @@ include 'session_handler.php';
         </div>
     </div>
 
+    <!-- Modal for custom exercise -->
+    <div class="modal fade" id="customExerciseModal" tabindex="-1" aria-labelledby="customExerciseModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="customExerciseModalLabel">Add Custom Exercise</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="customExerciseForm">
+                        <!-- Hidden inputs for day and body part -->
+                        <input type="hidden" id="customExerciseDay" value="">
+                        <input type="hidden" id="customExerciseBodyPart" value="">
+                        
+                        <div class="mb-3">
+                            <label for="customExerciseName" class="form-label">Exercise Name</label>
+                            <input type="text" class="form-control" id="customExerciseName" required>
+                            <div class="invalid-feedback">
+                                Please enter a name for the exercise
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="customExerciseDescription" class="form-label">Description (optional)</label>
+                            <textarea class="form-control" id="customExerciseDescription" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="customExerciseLink" class="form-label">Link (optional)</label>
+                            <input type="url" class="form-control" id="customExerciseLink" placeholder="https://example.com/exercise">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveCustomExercise">Save Exercise</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exerciseModal" tabindex="-1" aria-labelledby="exerciseModalLabel" aria-hidden="true">
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
         crossorigin="anonymous"></script>
