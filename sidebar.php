@@ -4,7 +4,7 @@
             <i class="lni lni-grid-alt"></i>
         </button>
         <div class="sidebar-logo">
-            <a href="#">GymLog</a>
+            <a href="index.php">GymLog</a>
         </div>
     </div>
     <ul class="sidebar-nav">
@@ -15,52 +15,71 @@
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="#" class="sidebar-link">
-                <i class="lni lni-dumbbell"></i>
-                <span>Exercise database</span>
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="#" class="sidebar-link">
+            <a href="day.php" class="sidebar-link">
                 <i class="lni lni-calendar"></i>
-                <span>Schedules</span>
+                <span>Training Schedule</span>
             </a>
         </li>
         <li class="sidebar-item">
             <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-               data-bs-target="#auth" aria-expanded="false" aria-controls="auth">
-                <i class="lni lni-bar-chart"></i>
-                <span>Goals & Progress</span>
+               data-bs-target="#nutrition" aria-expanded="false" aria-controls="nutrition">
+                <i class="lni lni-restaurant"></i>
+                <span>Nutrition</span>
             </a>
-            <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+            <ul id="nutrition" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">Choose Goals</a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">Progress Pictures</a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">Weight Notes</a>
+                    <a href="protein.php" class="sidebar-link">Protein Calculator</a>
                 </li>
             </ul>
         </li>
         <li class="sidebar-item">
-            <a href="#" class="sidebar-link">
+            <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+               data-bs-target="#progress" aria-expanded="false" aria-controls="progress">
+                <i class="lni lni-stats-up"></i>
+                <span>Goals & Progress</span>
+            </a>
+            <ul id="progress" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                <li class="sidebar-item">
+                    <a href="goal.php" class="sidebar-link">Set Goals</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="picture.php" class="sidebar-link">Progress Photos</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="vikt.php" class="sidebar-link">Weight History</a>
+                </li>
+            </ul>
+        </li>
+        <li class="sidebar-item">
+            <a href="music.php" class="sidebar-link">
                 <i class="lni lni-music"></i>
                 <span>Music & Motivation</span>
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="#" class="sidebar-link">
+            <a href="faq.php" class="sidebar-link">
                 <i class="lni lni-question-circle"></i>
                 <span>FAQ</span>
             </a>
         </li>
     </ul>
     <div class="sidebar-footer">
-        <a href="#" class="sidebar-link">
-            <i class="lni lni-enter"></i>
-            <span>Login / Register</span>
-        </a>
+        <?php
+        // Check if user is logged in
+        session_start();
+        if(isset($_SESSION['user_id'])) {
+            // User is logged in, show logout
+            echo '<a href="auth/logout.php" class="sidebar-link">';
+            echo '<i class="lni lni-exit"></i>';
+            echo '<span>Logout</span>';
+            echo '</a>';
+        } else {
+            // User is not logged in, show login/register
+            echo '<a href="auth/signin.php" class="sidebar-link">';
+            echo '<i class="lni lni-enter"></i>';
+            echo '<span>Login / Register</span>';
+            echo '</a>';
+        }
+        ?>
     </div>
 </aside> 
