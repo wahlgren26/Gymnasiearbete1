@@ -1,0 +1,20 @@
+/* Protein calculator specific styles */
+body {
+    background: #f8f9fa;
+    font-family: 'Poppins', sans-serif;
+}
+
+.card {
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-control, .form-select {
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+}
+
+.btn-primary {
+    border-radius: 10px;
+    padding: 0.75rem 1.5rem;
+} 

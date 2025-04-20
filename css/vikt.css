@@ -1,0 +1,17 @@
+/* Weight tracker specific styles */
+.chart-container {
+    background: white;
+    border-radius: 15px;
+    padding: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stats-card {
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+    border-radius: 15px;
+    overflow: hidden;
+} 

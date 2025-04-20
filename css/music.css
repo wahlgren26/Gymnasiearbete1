@@ -1,0 +1,54 @@
+/* Music and motivation specific styles */
+.hover-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.quote-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: none;
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+}
+
+.quote-card:hover {
+    transform: translateY(-3px);
+}
+
+.quote-card .card-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #495057;
+}
+
+.card-title {
+    color: #212529;
+    font-weight: 600;
+}
+
+.card-text.text-muted {
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+}
+
+iframe.rounded {
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .quote-card .card-text {
+        font-size: 1rem;
+    }
+    
+    .card-title {
+        font-size: 1.2rem;
+    }
+} 
