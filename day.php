@@ -329,29 +329,71 @@ include 'session_handler.php';
     // Updated exercise database with descriptions and links
     const exerciseDatabase = {
         'Chest': [
-            {name: 'Bench Press', desc: 'Compound exercise for chest development', link: 'https://www.bodybuilding.com/exercises/barbell-bench-press-medium-grip'},
-            {name: 'Incline Bench Press', desc: 'Targets upper chest muscles', link: 'https://www.bodybuilding.com/exercises/incline-bench-press'},
-            {name: 'Dumbbell Flyes', desc: 'Isolation movement for chest width', link: 'https://www.bodybuilding.com/exercises/dumbbell-flyes'},
-            {name: 'Push-Ups', desc: 'Classic bodyweight chest exercise', link: 'https://www.bodybuilding.com/exercises/pushups'},
-            {name: 'Cable Flyes', desc: 'Constant tension chest exercise', link: 'https://www.bodybuilding.com/exercises/cable-flyes'},
-            {name: 'Decline Bench Press', desc: 'Targets lower chest region', link: 'https://www.bodybuilding.com/exercises/decline-barbell-bench-press'}
+            {name: 'Bench Press',             desc: 'Compound exercise for chest development',           link: 'https://www.strengthlog.com/bench-press/'},
+            {name: 'Incline Bench Press',     desc: 'Targets upper chest muscles',                       link: 'https://www.strengthlog.com/incline-bench-press/'},
+            {name: 'Dumbbell Flyes',          desc: 'Isolation movement for chest width',                link: 'https://www.strengthlog.com/dumbbell-chest-fly/'},
+            {name: 'Push-Ups',                desc: 'Classic bodyweight chest exercise',                 link: 'https://www.strengthlog.com/push-up/'},
+            {name: 'Cable Flyes',             desc: 'Constant tension chest exercise',                   link: 'https://www.strengthlog.com/standing-cable-chest-fly/'},
+            {name: 'Decline Bench Press',     desc: 'Targets lower chest region',                        link: 'https://www.strengthlog.com/decline-bench-press/'}
         ],
         'Back': [
-            {name: 'Pull-Ups', desc: 'Upper body compound movement', link: 'https://www.bodybuilding.com/exercises/pullups'},
-            {name: 'Lat Pulldowns', desc: 'Machine-based back width builder', link: 'https://www.bodybuilding.com/exercises/wide-grip-lat-pulldown'},
-            {name: 'Barbell Rows', desc: 'Compound back thickness exercise', link: 'https://www.bodybuilding.com/exercises/bent-over-barbell-row'},
-            {name: 'Deadlifts', desc: 'Full body pulling movement', link: 'https://www.bodybuilding.com/exercises/barbell-deadlift'},
-            {name: 'Face Pulls', desc: 'Upper back and rear delt focus', link: 'https://www.bodybuilding.com/exercises/face-pull'},
-            {name: 'Seated Cable Rows', desc: 'Mid-back thickness builder', link: 'https://www.bodybuilding.com/exercises/seated-cable-rows'}
+            {name: 'Pull-Ups',                desc: 'Upper body compound movement',                      link: 'https://www.strengthlog.com/pull-up/'},
+            {name: 'Lat Pulldowns',           desc: 'Machine-based back width builder',                  link: 'https://www.strengthlog.com/lat-pulldown-with-pronated-grip/'},
+            {name: 'Barbell Rows',            desc: 'Compound back thickness exercise',                  link: 'https://www.strengthlog.com/barbell-row/'},
+            {name: 'Deadlifts',               desc: 'Full body pulling movement',                        link: 'https://www.strengthlog.com/deadlift/'},
+            {name: 'Face Pulls',              desc: 'Upper back and rear delt focus',                    link: 'https://www.strengthlog.com/face-pull/'},
+            {name: 'Seated Cable Rows',       desc: 'Mid-back thickness builder',                        link: 'https://www.strengthlog.com/seated-cable-row/'}
         ],
-        'Legs': ['Squats', 'Deadlifts', 'Leg Press', 'Lunges', 'Leg Extensions', 'Calf Raises'],
-        'Shoulders': ['Military Press', 'Lateral Raises', 'Front Raises', 'Face Pulls', 'Upright Rows', 'Arnold Press'],
-        'Arms': ['Bicep Curls', 'Tricep Extensions', 'Hammer Curls', 'Skull Crushers', 'Preacher Curls', 'Diamond Push-Ups'],
-        'Core': ['Planks', 'Crunches', 'Leg Raises', 'Russian Twists', 'Ab Wheel Rollouts', 'Dead Bug'],
-        'Cardio': ['Running', 'Cycling', 'Jump Rope', 'HIIT', 'Swimming', 'Rowing'],
-        'Full Body': ['Burpees', 'Mountain Climbers', 'Turkish Get-Ups', 'Thrusters', 'Clean and Press'],
+        'Legs': [
+            {name: 'Squats',                  desc: 'Primary compound leg exercise',                     link: 'https://www.strengthlog.com/squat/'},
+            {name: 'Deadlifts',               desc: 'Full body pulling exercise for posterior chain',    link: 'https://www.strengthlog.com/deadlift/'},
+            {name: 'Leg Press',               desc: 'Machine-based quad-dominant movement',               link: 'https://www.strengthlog.com/leg-press/'},
+            {name: 'Lunges',                  desc: 'Unilateral lower body exercise',                    link: 'https://www.strengthlog.com/dumbbell-lunge/'},
+            {name: 'Leg Extensions',          desc: 'Isolation exercise for quadriceps',                 link: 'https://www.strengthlog.com/leg-extension/'},
+            {name: 'Calf Raises',             desc: 'Isolation exercise for calf muscles',               link: 'https://www.strengthlog.com/standing-calf-raise/'}
+        ],
+        'Shoulders': [
+            {name: 'Military Press',          desc: 'Compound overhead pressing movement',                link: 'https://www.strengthlog.com/overhead-press/'},
+            {name: 'Lateral Raises',          desc: 'Isolation exercise for lateral deltoids',           link: 'https://www.strengthlog.com/lateral-raises/'},
+            {name: 'Front Raises',            desc: 'Isolation exercise for front deltoids',             link: 'https://www.strengthlog.com/front-raise/'},
+            {name: 'Face Pulls',              desc: 'Upper back and rear delt exercise',                 link: 'https://www.strengthlog.com/face-pull/'},
+            {name: 'Upright Rows',            desc: 'Compound exercise for traps and delts',             link: 'https://www.strengthlog.com/upright-row/'},
+            {name: 'Arnold Press',            desc: 'Variation of shoulder press for full deltoid development', link: 'https://www.strengthlog.com/arnold-press/'}
+        ],
+        'Arms': [
+            {name: 'Bicep Curls',             desc: 'Isolation exercise for biceps',                     link: 'https://www.strengthlog.com/barbell-curl/'},
+            {name: 'Tricep Extensions',       desc: 'Isolation exercise for triceps',                    link: 'https://www.strengthlog.com/triceps-pushdown/'},
+            {name: 'Hammer Curls',            desc: 'Bicep exercise that also targets forearms',          link: 'https://www.strengthlog.com/hammer-curl/'},
+            {name: 'Skull Crushers',          desc: 'Lying tricep extension exercise',                   link: 'https://www.strengthlog.com/skull-crusher/'},
+            {name: 'Preacher Curls',          desc: 'Bicep isolation with limited shoulder movement',    link: 'https://www.strengthlog.com/preacher-curl/'},
+            {name: 'Diamond Push-Ups',        desc: 'Bodyweight tricep-focused exercise',                link: 'https://www.strengthlog.com/close-grip-push-up/'}
+        ],
+        'Core': [
+            {name: 'Planks',                  desc: 'Isometric core strengthening exercise',             link: 'https://www.strengthlog.com/plank/'},
+            {name: 'Crunches',                desc: 'Basic abdominal exercise',                          link: 'https://www.strengthlog.com/crunch/'},
+            {name: 'Leg Raises',              desc: 'Lower abdominal focused movement',                  link: 'https://www.strengthlog.com/leg-raises/'},
+            {name: 'Russian Twists',          desc: 'Rotational exercise for obliques',                  link: 'https://www.strengthlog.com/russian-twist/'},
+            {name: 'Ab Wheel Rollouts',       desc: 'Advanced core stability exercise',                  link: 'https://www.strengthlog.com/ab-wheel-rollout/'},
+            {name: 'Dead Bug',                desc: 'Core stability exercise with limb movement',        link: 'https://www.strengthlog.com/dead-bug/'}
+        ],
+        'Cardio': [
+            {name: 'Running',                 desc: 'Classic cardiovascular exercise',                   link: 'https://www.strengthlog.com/exercises-for-running-faster/'},
+            {name: 'Cycling',                 desc: 'Low-impact cardiovascular exercise',                link: 'https://www.webmd.com/fitness-exercise/biking-workout'},
+            {name: 'Jump Rope',               desc: 'High intensity cardio and coordination exercise',   link: 'https://www.strengthlog.com/jump-rope/'},
+            {name: 'HIIT',                    desc: 'High-Intensity Interval Training for efficient cardio', link: 'https://www.webmd.com/fitness-exercise/high-intensity-interval-training-hiit'},
+            {name: 'Swimming',                desc: 'Full body, low-impact cardio exercise',             link: 'https://www.strengthlog.com/strength-training-for-swimmers/'},
+            {name: 'Rowing',                  desc: 'Full-body cardio and strength exercise',            link: 'https://www.strengthlog.com/rowing-machine/'}
+        ],
+        'Full Body': [
+            {name: 'Burpees',                 desc: 'High-intensity full body exercise',                 link: 'https://www.strengthlog.com/burpees/'},
+            {name: 'Mountain Climbers',       desc: 'Dynamic core and cardio exercise',                  link: 'https://www.strengthlog.com/mountain-climbers/'},
+            {name: 'Turkish Get-Ups',         desc: 'Complex full body stability exercise',             link: 'https://www.strengthlog.com/turkish-get-up/'},
+            {name: 'Thrusters',               desc: 'Compound exercise combining squat and press',        link: 'https://www.strengthlog.com/thrusters/'},
+            {name: 'Clean and Press',         desc: 'Olympic lifting movement for power and strength',    link: 'https://www.strengthlog.com/clean-and-press/'}
+        ],
         'Rest Day': []
     };
+
 
     function updateWorkoutFocus(day) {
         const checkboxes = document.querySelectorAll(`input[id^="${day}-"]:checked`);
@@ -391,11 +433,13 @@ include 'session_handler.php';
                                 onchange="addSelectedExercise('${day}', '${part}', this)">
                             <option value="">Select an exercise</option>
                             ${exerciseDatabase[part].map(exercise => 
+                                typeof exercise === 'object' ? 
                                 `<option value="${exercise.name}" 
-                                        data-desc="${exercise.desc}"
-                                        data-link="${exercise.link}">
+                                        data-desc="${exercise.desc || ''}"
+                                        data-link="${exercise.link || '#'}">
                                     ${exercise.name}
-                                </option>`
+                                </option>` :
+                                `<option value="${exercise}">${exercise}</option>`
                             ).join('')}
                         </select>
                         <button class="btn btn-sm btn-outline-primary ms-2" 
@@ -410,13 +454,51 @@ include 'session_handler.php';
     }
 
     function addSelectedExercise(day, bodyPart, selectElement) {
-        if (!selectElement.value) return;
-        
-        const selectedOption = selectElement.options[selectElement.selectedIndex];
         const exerciseName = selectElement.value;
-        const exerciseDesc = selectedOption.dataset.desc;
-        const exerciseLink = selectedOption.dataset.link;
+        if (!exerciseName) return;
         
+        // Get the selected option
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        const exerciseDesc = selectedOption.getAttribute('data-desc') || '';
+        const exerciseLink = selectedOption.getAttribute('data-link') || '#';
+        
+        // Create exercise element
+        addExerciseToDay(day, bodyPart, exerciseName, exerciseDesc, exerciseLink);
+        
+        // Reset select
+        selectElement.value = "";
+    }
+
+    function addCustomExercise(day, bodyPart) {
+        const exerciseName = prompt("Enter exercise name:");
+        if (!exerciseName) return;
+        
+        const exerciseDesc = prompt("Enter exercise description (optional):", "");
+        const exerciseLink = prompt("Enter exercise link (optional):", "#");
+        
+        addExerciseToDay(day, bodyPart, exerciseName, exerciseDesc, exerciseLink);
+    }
+
+    function showExerciseSelection(day) {
+        document.querySelector(`#exercise-dropdowns-${day}`).style.display = 'block';
+    }
+
+    function removeExercise(button) {
+        const exerciseItem = button.closest('.selected-exercise-item');
+        if (exerciseItem) {
+            exerciseItem.remove();
+        }
+    }
+
+    function removePart(day, part) {
+        const checkbox = document.getElementById(`${day}-${part.toLowerCase().replace(' ', '-')}`);
+        if (checkbox) {
+            checkbox.checked = false;
+            updateWorkoutFocus(day);
+        }
+    }
+
+    function addExerciseToDay(day, bodyPart, exerciseName, exerciseDesc, exerciseLink) {
         const selectedExercisesContainer = document.querySelector(`#selected-exercises-${day} .selected-exercises-container`);
         const exerciseElement = document.createElement('div');
         exerciseElement.className = 'selected-exercise-item mb-3 p-3 bg-light rounded-3';
@@ -450,74 +532,35 @@ include 'session_handler.php';
         `;
         selectedExercisesContainer.appendChild(exerciseElement);
         
-        // Reset select element
-        selectElement.value = '';
-        
         // Hide exercise dropdowns and show add button
         document.querySelector(`#exercise-dropdowns-${day}`).style.display = 'none';
         document.querySelector(`#selected-exercises-${day} .add-exercise-btn`).style.display = 'inline-flex';
     }
 
-    function showExerciseSelection(day) {
-        document.querySelector(`#exercise-dropdowns-${day}`).style.display = 'block';
-    }
-
-    function removeExercise(button) {
-        button.closest('.selected-exercise-item').remove();
-    }
-
-    function removePart(day, part) {
-        const checkbox = document.getElementById(`${day}-${part.toLowerCase().replace(' ', '-')}`);
-        if (checkbox) {
-            checkbox.checked = false;
-            updateWorkoutFocus(day);
-        }
-    }
-
-    function addCustomExercise(day, bodyPart) {
-        const customExercise = prompt('Enter custom exercise name:');
-        if (customExercise && customExercise.trim()) {
-            const select = document.querySelector(`#exercises-${day}-${bodyPart.toLowerCase().replace(' ', '-')}`);
-            const option = new Option(customExercise.trim(), customExercise.trim());
-            select.add(option);
-            option.selected = true;
-        }
-    }
-
-    // Add this new function for showing exercise info
     function showExerciseInfo(name, description, link) {
-        // Create modal if it doesn't exist
-        if (!document.getElementById('exerciseInfoModal')) {
-            const modalElement = document.createElement('div');
-            modalElement.innerHTML = `
-                <div class="modal fade" id="exerciseInfoModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content border-0 shadow">
-                            <div class="modal-header border-0">
-                                <h5 class="modal-title fw-bold"></h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <p class="exercise-description mb-4"></p>
-                                <a href="" target="_blank" class="btn btn-primary w-100">
-                                    <i class="lni lni-video me-2"></i>View Detailed Instructions
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modalElement);
+        const modal = new bootstrap.Modal(document.getElementById('exerciseInfoModal'));
+        document.getElementById('exerciseInfoTitle').textContent = name;
+        
+        let modalBody = document.getElementById('exerciseInfoBody');
+        modalBody.innerHTML = '';
+        
+        if (description) {
+            const descElement = document.createElement('p');
+            descElement.className = 'exercise-description';
+            descElement.textContent = description;
+            modalBody.appendChild(descElement);
         }
-
-        // Update modal content
-        const modal = document.getElementById('exerciseInfoModal');
-        modal.querySelector('.modal-title').textContent = name;
-        modal.querySelector('.exercise-description').textContent = description;
-        modal.querySelector('.modal-body a').href = link;
-
-        // Show modal
-        new bootstrap.Modal(modal).show();
+        
+        if (link && link !== '#') {
+            const linkElement = document.createElement('a');
+            linkElement.href = link;
+            linkElement.target = '_blank';
+            linkElement.textContent = 'Learn more about this exercise on StrengthLog';
+            linkElement.className = 'btn btn-sm btn-primary mt-2';
+            modalBody.appendChild(linkElement);
+        }
+        
+        modal.show();
     }
 
     // Add these new functions and arrays for motivational popups
@@ -583,5 +626,22 @@ include 'session_handler.php';
     // Start scheduling motivational messages when page loads
     scheduleRandomMotivation();
     </script>
+
+    <!-- Exercise Info Modal -->
+    <div class="modal fade" id="exerciseInfoModal" tabindex="-1" aria-labelledby="exerciseInfoTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exerciseInfoTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="exerciseInfoBody">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
