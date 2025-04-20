@@ -1,4 +1,30 @@
 /* Day-specific styles */
+.card {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+}
+
+.form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    border-color: #0d6efd;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #0d6efd, #0a58ca);
+    border: none;
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, #0a58ca, #084298);
+    box-shadow: 0 6px 20px rgba(13, 110, 253, 0.3);
+}
+
+.badge {
+    padding: 0.5em 1em;
+    font-weight: 500;
+}
+
 .dropdown-menu {
     max-height: 300px;
     overflow-y: auto;
@@ -28,8 +54,200 @@
 .exercise-select-container {
     display: flex;
     align-items: start;
+    gap: 0.5rem;
+}
+
+select[multiple] {
+    min-height: 100px;
+}
+
+.form-select option {
+    padding: 8px;
+    margin: 2px 0;
+    border-radius: 4px;
+}
+
+.form-select option:checked {
+    background: linear-gradient(45deg, #0d6efd, #0a58ca);
+    color: white;
+}
+
+.btn-outline-primary {
+    border-color: #0d6efd;
+    color: #0d6efd;
+    padding: 0.25rem 0.5rem;
+}
+
+.btn-outline-primary:hover {
+    background: linear-gradient(45deg, #0d6efd, #0a58ca);
+    border-color: transparent;
+}
+
+.selected-exercise-item {
+    border: 1px solid rgba(0,0,0,0.1);
+    transition: all 0.2s;
+}
+
+.selected-exercise-item:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.add-exercise-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.exercise-details input {
+    background-color: white;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.exercise-details input:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13,110,253,0.15);
+}
+
+.exercise-info {
+    color: #0d6efd;
+    opacity: 0.7;
+    transition: all 0.2s;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.exercise-info:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.modal-content {
+    border-radius: 1rem;
+}
+
+.modal-header {
+    padding: 1.5rem 1.5rem 1rem;
+}
+
+.modal-body {
+    padding: 1rem 1.5rem 1.5rem;
+}
+
+.exercise-description {
+    color: #6c757d;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.btn-primary i {
+    font-size: 1.2em;
+    vertical-align: middle;
+}
+
+.toast {
+    background: linear-gradient(45deg, #0d6efd, #0a58ca);
+    color: white;
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
+    opacity: 0;
+    transition: all 0.3s ease;
+    animation: slideIn 0.3s ease forwards;
+}
+
+.toast.show {
+    opacity: 1;
+}
+
+.toast-body {
+    padding: 1rem;
+    font-weight: 500;
+}
+
+.motivation-icon {
+    font-size: 1.2em;
+}
+
+.motivation-text {
+    font-size: 1rem;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
 }
 
 .toast.hide {
     animation: fadeOut 0.3s ease forwards;
+}
+
+/* Stilar för sparade träningsdagar */
+#saved-workouts-container .card {
+    transition: all 0.2s ease;
+}
+
+#saved-workouts-container .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+#saved-workouts-container .badge {
+    font-weight: normal;
+    padding: 0.4em 0.8em;
+}
+
+#saved-workouts-container .list-group-item {
+    background-color: transparent;
+}
+
+#saved-workouts-container .btn-outline-primary,
+#saved-workouts-container .btn-outline-danger,
+#saved-workouts-container .btn-outline-success {
+    padding: 0.25rem;
+    line-height: 1;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#saved-workouts-container .btn-outline-success {
+    color: #198754;
+    border-color: #198754;
+}
+
+#saved-workouts-container .btn-outline-success:hover {
+    color: white;
+    background-color: #198754;
+}
+
+#saved-workouts-container .border-primary {
+    border-color: #0d6efd !important;
+    border-width: 2px !important;
+    box-shadow: 0 0 15px rgba(13, 110, 253, 0.3);
+}
+
+#no-saved-workouts {
+    background-color: rgba(0, 0, 0, 0.02);
+    border-radius: 1rem;
 } 
