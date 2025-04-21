@@ -21,6 +21,12 @@
             </a>
         </li>
         <li class="sidebar-item">
+            <a href="workout_log.php" class="sidebar-link">
+                <i class="lni lni-timer"></i>
+                <span>Workout Log</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
             <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
                data-bs-target="#nutrition" aria-expanded="false" aria-controls="nutrition">
                 <i class="lni lni-restaurant"></i>

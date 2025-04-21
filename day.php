@@ -112,26 +112,26 @@ include 'session_handler.php';
                         }
                         ?>
                     </div>
+                    
+                    <!-- Saved workout days section -->
+                    <div class="mt-5 mb-5">
+                        <h2 class="display-5 text-center mb-4">Your Saved Workout Days</h2>
+                        
+                        <div class="row" id="saved-workouts-container">
+                            <!-- No saved workout days yet -->
+                            <div class="col-12 text-center py-5" id="no-saved-workouts">
+                                <div class="py-5">
+                                    <i class="lni lni-calendar fs-1 text-muted mb-3"></i>
+                                    <h4 class="text-muted">No saved workout days yet</h4>
+                                    <p class="text-muted">Plan and save your workout days to see them here</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Saved workout days will be displayed here -->
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Sparade träningsdagar sektion -->
-    <div class="container mt-5 mb-5">
-        <h2 class="display-5 text-center mb-4">Dina sparade träningsdagar</h2>
-        
-        <div class="row" id="saved-workouts-container">
-            <!-- Inga sparade träningsdagar ännu -->
-            <div class="col-12 text-center py-5" id="no-saved-workouts">
-                <div class="py-5">
-                    <i class="lni lni-calendar fs-1 text-muted mb-3"></i>
-                    <h4 class="text-muted">Inga sparade träningsdagar ännu</h4>
-                    <p class="text-muted">Planera och spara dina träningsdagar för att se dem här</p>
-                </div>
-            </div>
-            
-            <!-- Sparade träningsdagar kommer att visas här -->
         </div>
     </div>
 
@@ -201,5 +201,6 @@ include 'session_handler.php';
         crossorigin="anonymous"></script>
     <script src="script.js"></script>
     <script src="js/workout.js"></script>
+    <script src="js/workout_log.js"></script>
 </body>
 </html>
