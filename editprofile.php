@@ -61,6 +61,7 @@ include 'session_handler.php';
 
 <body>
 <div class="wrapper">
+
     <?php include 'sidebar.php'; ?>
     
     <div class="main p-3">

@@ -19,9 +19,8 @@ include 'session_handler.php';
 
 <body>
     <div class="wrapper">
-        <!--start of sidebar-->
+
         <?php include 'sidebar.php'; ?>
-        <!--end of sidebar-->
 
         <div class="main p-3">
             <div class="content">
