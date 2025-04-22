@@ -58,7 +58,7 @@ include 'session_handler.php';
                                     </ul>
 
                                     <h4>How long should a workout be?</h4>
-                                    <p>45-75 minutes is a good range. Focus on quality over quantity.</p>
+                                    <p>45-90 minutes is a good range. Focus on quality over quantity.</p>
 
                                     <h4>Is cardio necessary?</h4>
                                     <p>Not always, but it's useful for heart health and fat loss. Do LISS (walking, cycling) or HIIT depending on your goals.</p>
@@ -90,7 +90,7 @@ include 'session_handler.php';
                                     </ul>
 
                                     <h4>Should I train to failure?</h4>
-                                    <p>Not every set. Save it for the last set of an exercise.</p>
+                                    <p>We recommend either doing it every set. Or in some cases, save it for the last set of an exercise.</p>
                                 </div>
                             </div>
                         </div>

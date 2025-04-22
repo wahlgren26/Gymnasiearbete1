@@ -7,6 +7,7 @@
             <a href="index.php">GymLog</a>
         </div>
     </div>
+    
     <ul class="sidebar-nav">
         <li class="sidebar-item">
             <a href="profile.php" class="sidebar-link">
@@ -24,6 +25,12 @@
             <a href="workout_log.php" class="sidebar-link">
                 <i class="lni lni-timer"></i>
                 <span>Workout Log</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="social_feed.php" class="sidebar-link">
+                <i class="lni lni-users"></i>
+                <span>Social Feed</span>
             </a>
         </li>
         <li class="sidebar-item">

@@ -92,6 +92,14 @@ include 'session_handler.php';
             border-radius: 15px;
         }
         
+        .welcome-message {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #0d6efd;
+        }
+        
         @media (max-width: 768px) {
             .hero-content {
                 text-align: center;
@@ -108,6 +116,13 @@ include 'session_handler.php';
 
     <div class="main p-3">
         <div class="content">
+            <?php if(isset($_SESSION['user_id'])): ?>
+            <div class="welcome-message">
+                <h4>Welcome, <?php echo htmlspecialchars($_SESSION['firstname']); ?>!</h4>
+                <p>What would you like to do today? Register a new workout or perhaps update your goals?</p>
+            </div>
+            <?php endif; ?>
+            
             <!-- Hero Section -->
             <div class="hero-section position-relative p-5 mb-5">
                 <div class="container">

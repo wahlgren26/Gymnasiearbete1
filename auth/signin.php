@@ -11,24 +11,39 @@
     <link rel="stylesheet" href="signin.css">
 </head>
 
+<body>
+<?php
+// Starta session om inte startad
+session_start();
+?>
+
 <div class="col-sm-12 text-center">
 <center>
     <div class="container">
-        <form class="form">
+        <form class="form" action="signin_handler.php" method="POST">
             <p class="title">Sign In</p>
             <p class="message">Welcome back to GymLog</p>
             
+            <?php if (isset($_SESSION['error'])): ?>
+                <div class="alert alert-danger" role="alert">
+                    <?php 
+                        echo $_SESSION['error']; 
+                        unset($_SESSION['error']);
+                    ?>
+                </div>
+            <?php endif; ?>
+            
             <label>
-                <input required="" placeholder="" type="text" class="input" pattern="[a-zA-Z0-9]+" title="Username can only contain letters and numbers">
+                <input required name="username" placeholder="" type="text" class="input" pattern="[a-zA-Z0-9]+" title="Username can only contain letters and numbers">
                 <span>Username</span>
             </label>
             
             <label>
-                <input required="" placeholder="" type="password" class="input">
+                <input required name="password" placeholder="" type="password" class="input">
                 <span>Password</span>
             </label>
             
-            <button class="submit">Sign In</button>
+            <button class="submit" type="submit">Sign In</button>
             <p class="signin">Don't have an account? <a href="signup.php">Sign up</a></p>
             <button type="button" class="return-btn" onclick="window.location.href='../';">&lt; Return</button>
         </form>

@@ -1,15 +1,13 @@
 document.querySelector('form').addEventListener('submit', function(e) {
-    const password = document.querySelector('input[type="password"]');
-    const confirmPassword = document.querySelector('input[type="password"]:last-of-type');
+    const password = document.querySelector('input[name="password"]');
+    const confirmPassword = document.querySelector('input[name="confirm_password"]');
     
     if (password.value !== confirmPassword.value) {
         e.preventDefault();
         alert('Lösenorden matchar inte!');
+        return;
     }
-}); 
-
-const form = document.querySelector('form');
-form.addEventListener('submit', function(e) {
+    
     const submitButton = this.querySelector('.submit');
     submitButton.disabled = true;
     submitButton.classList.add('loading');
