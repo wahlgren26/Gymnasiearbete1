@@ -81,6 +81,9 @@ include 'session_handler.php';
         <div class="main p-3">
             <div class="content">
                 <div class="container">
+                    <!-- Dolt fält för användar-ID -->
+                    <input type="hidden" id="current_user_id" value="<?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : ''; ?>">
+
                     <h1 class="display-4 text-center mb-3">Workout Log</h1>
                     <p class="lead text-center mb-5">Track your workouts and monitor your progress over time</p>
                     
@@ -138,6 +141,13 @@ include 'session_handler.php';
                                         <label for="workout-notes" class="form-label text-muted small text-uppercase fw-bold">Notes</label>
                                         <textarea class="form-control bg-light border-0 rounded-3" id="workout-notes" rows="3" 
                                             placeholder="How did your workout feel? Anything special you want to remember?"></textarea>
+                                    </div>
+                                    
+                                    <div class="form-check mb-4">
+                                        <input class="form-check-input" type="checkbox" id="share-to-social" checked>
+                                        <label class="form-check-label" for="share-to-social">
+                                            Share this workout on social feed
+                                        </label>
                                     </div>
                                     
                                     <button class="btn btn-primary btn-lg w-100 rounded-3" id="save-workout-btn" disabled>

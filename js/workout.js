@@ -407,9 +407,27 @@ const CustomModals = {
 const WorkoutSchedule = {
     // Function to get current user ID
     getUserId: function() {
-        // In a real application, this would come from a server-side session
-        // For now, we'll return the user from session or a default value
-        return sessionStorage.getItem('logged_in_user_id') || '1'; // Default to user ID 1 if not logged in
+        // Get user ID from PHP session - set in session_handler.php
+        // Look for a hidden field with user ID that we'll add to the page
+        const userIdField = document.getElementById('current_user_id');
+        if (userIdField && userIdField.value) {
+            return userIdField.value;
+        }
+        
+        // Fallback to sessionstorage
+        const sessionUserId = sessionStorage.getItem('logged_in_user_id');
+        if (sessionUserId) {
+            return sessionUserId;
+        }
+        
+        // If all else fails, use the timestamp to create a unique ID for this browser
+        // This ensures each browser/device at least sees its own workouts
+        let uniqueBrowserId = localStorage.getItem('unique_browser_id');
+        if (!uniqueBrowserId) {
+            uniqueBrowserId = 'browser_' + Date.now();
+            localStorage.setItem('unique_browser_id', uniqueBrowserId);
+        }
+        return uniqueBrowserId;
     },
 
     // Get workout days schedule for current user

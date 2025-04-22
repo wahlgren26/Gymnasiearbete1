@@ -26,6 +26,9 @@ include 'session_handler.php';
         <div class="main p-3">
             <div class="content">
                 <div class="container">
+                    <!-- Dolt fält för användar-ID -->
+                    <input type="hidden" id="current_user_id" value="<?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : ''; ?>">
+
                     <h1 class="display-4 text-center mb-5">Weekly Exercise Schedule</h1>
                     
                     <div class="row g-4">

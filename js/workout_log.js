@@ -423,7 +423,7 @@ document.addEventListener('DOMContentLoaded', function() {
         editExerciseModal.show();
     }
     
-    // Handle saved workouts
+    // Save workout
     function saveWorkout() {
         const workoutName = document.getElementById('workout-name').value.trim() || 'Unnamed Workout';
         const workoutDate = document.getElementById('workout-date').value;
@@ -452,22 +452,84 @@ document.addEventListener('DOMContentLoaded', function() {
             endTime: new Date(timerStartTime + timerPausedTime).toISOString()
         };
         
-        // Get existing saved workouts from localStorage
-        let savedWorkouts = JSON.parse(localStorage.getItem('workoutLogs')) || [];
+        // Get existing saved workouts using the user-specific function
+        let savedWorkouts = getUserWorkouts();
         savedWorkouts.push(workout);
         
-        // Save back to localStorage
-        localStorage.setItem('workoutLogs', JSON.stringify(savedWorkouts));
+        // Save back using the user-specific function
+        saveUserWorkouts(savedWorkouts);
         
         // Update UI
         loadWorkoutHistory();
         loadWorkoutTemplates();
+        
+        // Create a post in social feed to share the workout if checkbox is checked
+        const shareToSocial = document.getElementById('share-to-social').checked;
+        if (shareToSocial) {
+            shareWorkoutToSocialFeed(workout);
+        }
         
         // Reset the form
         resetWorkoutForm();
         
         // Show confirmation
         alert('Workout saved successfully!');
+    }
+    
+    // Share workout to social feed
+    function shareWorkoutToSocialFeed(workout) {
+        // Create a nicely formatted message
+        let exerciseList = '';
+        if (workout.exercises.length > 0) {
+            exerciseList = workout.exercises.map(ex => {
+                let exerciseText = `${ex.name}`;
+                if (ex.sets && ex.reps) {
+                    exerciseText += ` (${ex.sets} sets × ${ex.reps} reps`;
+                    if (ex.weight) {
+                        exerciseText += ` × ${ex.weight} kg`;
+                    }
+                    exerciseText += `)`;
+                }
+                return exerciseText;
+            }).join(', ');
+        }
+        
+        let message = `I just completed a workout: "${workout.name}" 💪\n\n`;
+        message += `Duration: ${workout.duration}\n`;
+        
+        if (workout.location) {
+            message += `Location: ${workout.location}\n`;
+        }
+        
+        message += `\nExercises: ${exerciseList}`;
+        
+        if (workout.notes) {
+            message += `\n\nNotes: ${workout.notes}`;
+        }
+        
+        message += `\n\n#workout #fitness #gymlog`;
+        
+        // Send the post to the API
+        const formData = new FormData();
+        formData.append('content', message);
+        formData.append('post_type', 'workout');
+        formData.append('workout_id', workout.id); // Include the workout ID
+        
+        fetch('api/social_api.php?action=create_post', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Workout shared to social feed successfully!');
+            } else {
+                console.error('Failed to share workout to social feed:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error sharing workout to social feed:', error);
+        });
     }
     
     // Reset the form after a workout has been saved
@@ -496,8 +558,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const historyContainer = document.getElementById('workout-history-container');
         const noHistory = document.getElementById('no-history');
         
-        // Get saved workouts
-        const savedWorkouts = JSON.parse(localStorage.getItem('workoutLogs')) || [];
+        // Get saved workouts using the user-specific function
+        const savedWorkouts = getUserWorkouts();
         
         if (savedWorkouts.length === 0) {
             noHistory.style.display = 'block';
@@ -754,10 +816,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Delete a workout
     function deleteWorkout(workoutId) {
         if (confirm('Are you sure you want to delete this workout?')) {
-            // Remove from localStorage
-            let savedWorkouts = JSON.parse(localStorage.getItem('workoutLogs')) || [];
+            // Get user's workouts
+            let savedWorkouts = getUserWorkouts();
             savedWorkouts = savedWorkouts.filter(w => w.id !== workoutId);
-            localStorage.setItem('workoutLogs', JSON.stringify(savedWorkouts));
+            // Save user workouts
+            saveUserWorkouts(savedWorkouts);
             
             // Ta bort från DOM
             const workoutElement = document.querySelector(`.workout-card[data-workout-id="${workoutId}"]`);
@@ -1130,9 +1193,27 @@ function createEditExerciseModal() {
 
 // Function to handle user specific data storage
 function getUserId() {
-    // In a real application, this would come from a server-side session
-    // For now, we'll return the user from session or a default value
-    return sessionStorage.getItem('logged_in_user_id') || '1'; // Default to user ID 1 if not logged in
+    // Get user ID from PHP session - set in session_handler.php
+    // Look for a hidden field with user ID that we'll add to the page
+    const userIdField = document.getElementById('current_user_id');
+    if (userIdField && userIdField.value) {
+        return userIdField.value;
+    }
+    
+    // Fallback to sessionstorage
+    const sessionUserId = sessionStorage.getItem('logged_in_user_id');
+    if (sessionUserId) {
+        return sessionUserId;
+    }
+    
+    // If all else fails, use the timestamp to create a unique ID for this browser
+    // This ensures each browser/device at least sees its own workouts
+    let uniqueBrowserId = localStorage.getItem('unique_browser_id');
+    if (!uniqueBrowserId) {
+        uniqueBrowserId = 'browser_' + Date.now();
+        localStorage.setItem('unique_browser_id', uniqueBrowserId);
+    }
+    return uniqueBrowserId;
 }
 
 // Get workouts for current user

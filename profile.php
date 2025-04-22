@@ -113,7 +113,29 @@ try {
 }
 
 // Check if there's a saved setting to show/hide progress tracker
-$show_progress_tracker = isset($_SESSION['show_progress_tracker']) ? $_SESSION['show_progress_tracker'] : true;
+// Try to get setting from database first, fall back to session if needed
+$show_progress_tracker = true; // Default value
+try {
+    $stmt = $conn->prepare("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'users' AND COLUMN_NAME = 'show_progress_tracker'");
+    $stmt->execute();
+    
+    // Check if column exists
+    if ($stmt->rowCount() > 0) {
+        // Column exists, get value
+        $stmt = $conn->prepare("SELECT show_progress_tracker FROM users WHERE user_id = ?");
+        $stmt->execute([$_SESSION['user_id']]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            $show_progress_tracker = (bool)$result['show_progress_tracker'];
+        }
+    } else {
+        // Column doesn't exist, create it
+        $conn->exec("ALTER TABLE users ADD COLUMN show_progress_tracker BOOLEAN DEFAULT 1");
+    }
+} catch (PDOException $e) {
+    // If database error, fallback to session value
+    $show_progress_tracker = isset($_SESSION['show_progress_tracker']) ? $_SESSION['show_progress_tracker'] : true;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -202,10 +224,6 @@ $show_progress_tracker = isset($_SESSION['show_progress_tracker']) ? $_SESSION['
                     </div>
                     <?php if ($is_own_profile): ?>
                     <a href="editprofile.php" class="btn btn-primary"><i class="lni lni-pencil"></i> Edit Profile</a>
-                    <?php else: ?>
-                    <a href="messages.php?user_id=<?php echo $profile_user_id; ?>" class="btn btn-outline-primary">
-                        <i class="lni lni-envelope"></i> Send Message
-                    </a>
                     <?php endif; ?>
                 </div>
                 <div class="profile-description">

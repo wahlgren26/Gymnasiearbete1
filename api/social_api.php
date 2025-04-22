@@ -10,16 +10,7 @@ if (!isset($_SESSION["user_id"])) {
 }
 
 // Include database connection
-require_once '../config/database.php';
-
-try {
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    header('Content-Type: application/json');
-    echo json_encode(['success' => false, 'error' => 'Databasanslutningen misslyckades: ' . $e->getMessage()]);
-    exit;
-}
+require_once '../config/db_connect.php';
 
 // Set content type to JSON
 header('Content-Type: application/json');
@@ -63,6 +54,12 @@ if ($method === 'GET') {
         case 'add_comment':
             addComment($conn);
             break;
+        case 'delete_post':
+            deletePost($conn);
+            break;
+        case 'delete_comment':
+            deleteComment($conn);
+            break;
         default:
             echo json_encode(['success' => false, 'error' => 'Ogiltig åtgärd']);
             break;
@@ -86,9 +83,9 @@ function getPosts($conn) {
             SELECT p.*, 
                    u.username, 
                    u.profile_image AS profile_picture,
-                   (SELECT COUNT(*) FROM social_kudos WHERE post_id = p.post_id) AS kudos_count,
-                   (SELECT COUNT(*) FROM social_comments WHERE post_id = p.post_id) AS comment_count,
-                   (SELECT COUNT(*) FROM social_kudos WHERE post_id = p.post_id AND user_id = :user_id) AS user_has_kudos
+                   (SELECT COUNT(*) FROM kudos WHERE post_id = p.post_id) AS kudos_count,
+                   (SELECT COUNT(*) FROM comments WHERE post_id = p.post_id) AS comment_count,
+                   (SELECT COUNT(*) FROM kudos WHERE post_id = p.post_id AND user_id = :user_id) AS user_has_kudos
             FROM social_posts p
             JOIN users u ON p.user_id = u.user_id
             ORDER BY p.created_at DESC
@@ -139,7 +136,7 @@ function getComments($conn) {
             SELECT c.*, 
                    u.username, 
                    u.profile_image AS profile_picture
-            FROM social_comments c
+            FROM comments c
             JOIN users u ON c.user_id = u.user_id
             WHERE c.post_id = :post_id
             ORDER BY c.created_at ASC
@@ -160,6 +157,8 @@ function getComments($conn) {
  */
 function createPost($conn) {
     $content = isset($_POST['content']) ? trim($_POST['content']) : '';
+    $post_type = isset($_POST['post_type']) ? $_POST['post_type'] : 'workout';
+    $workout_id = isset($_POST['workout_id']) ? intval($_POST['workout_id']) : null;
     $user_id = $_SESSION['user_id'];
     
     if (empty($content)) {
@@ -170,11 +169,13 @@ function createPost($conn) {
     try {
         // Insert the post
         $stmt = $conn->prepare("
-            INSERT INTO social_posts (user_id, content, created_at) 
-            VALUES (:user_id, :content, NOW())
+            INSERT INTO social_posts (user_id, content, post_type, workout_id, created_at) 
+            VALUES (:user_id, :content, :post_type, :workout_id, NOW())
         ");
         $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
         $stmt->bindParam(':content', $content, PDO::PARAM_STR);
+        $stmt->bindParam(':post_type', $post_type, PDO::PARAM_STR);
+        $stmt->bindParam(':workout_id', $workout_id, $workout_id ? PDO::PARAM_INT : PDO::PARAM_NULL);
         $stmt->execute();
         
         $post_id = $conn->lastInsertId();
@@ -228,7 +229,7 @@ function toggleKudos($conn) {
         
         // Check if user has already given kudos
         $stmt = $conn->prepare("
-            SELECT kudos_id FROM social_kudos 
+            SELECT kudos_id FROM kudos 
             WHERE post_id = :post_id AND user_id = :user_id
         ");
         $stmt->bindParam(':post_id', $post_id, PDO::PARAM_INT);
@@ -240,7 +241,7 @@ function toggleKudos($conn) {
         if ($hasKudos) {
             // Remove kudos
             $stmt = $conn->prepare("
-                DELETE FROM social_kudos 
+                DELETE FROM kudos 
                 WHERE post_id = :post_id AND user_id = :user_id
             ");
             $stmt->bindParam(':post_id', $post_id, PDO::PARAM_INT);
@@ -251,7 +252,7 @@ function toggleKudos($conn) {
         } else {
             // Add kudos
             $stmt = $conn->prepare("
-                INSERT INTO social_kudos (post_id, user_id, created_at) 
+                INSERT INTO kudos (post_id, user_id, created_at) 
                 VALUES (:post_id, :user_id, NOW())
             ");
             $stmt->bindParam(':post_id', $post_id, PDO::PARAM_INT);
@@ -264,7 +265,7 @@ function toggleKudos($conn) {
         // Get updated kudos count
         $stmt = $conn->prepare("
             SELECT COUNT(*) AS kudos_count 
-            FROM social_kudos 
+            FROM kudos 
             WHERE post_id = :post_id
         ");
         $stmt->bindParam(':post_id', $post_id, PDO::PARAM_INT);
@@ -314,7 +315,7 @@ function addComment($conn) {
         
         // Insert the comment
         $stmt = $conn->prepare("
-            INSERT INTO social_comments (post_id, user_id, content, created_at) 
+            INSERT INTO comments (post_id, user_id, content, created_at) 
             VALUES (:post_id, :user_id, :content, NOW())
         ");
         $stmt->bindParam(':post_id', $post_id, PDO::PARAM_INT);
@@ -329,7 +330,7 @@ function addComment($conn) {
             SELECT c.*, 
                    u.username, 
                    u.profile_image AS profile_picture
-            FROM social_comments c
+            FROM comments c
             JOIN users u ON c.user_id = u.user_id
             WHERE c.comment_id = :comment_id
         ");
@@ -365,7 +366,7 @@ function getUserStats($conn) {
         // Get kudos given count
         $stmt = $conn->prepare("
             SELECT COUNT(*) AS kudos_given 
-            FROM social_kudos 
+            FROM kudos 
             WHERE user_id = :user_id
         ");
         $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
@@ -376,7 +377,7 @@ function getUserStats($conn) {
         // Get kudos received count
         $stmt = $conn->prepare("
             SELECT COUNT(*) AS kudos_received 
-            FROM social_kudos k
+            FROM kudos k
             JOIN social_posts p ON k.post_id = p.post_id
             WHERE p.user_id = :user_id
         ");
@@ -433,5 +434,101 @@ function getTrendingTags($conn) {
         echo json_encode(['success' => true, 'tags' => $tags]);
     } catch (PDOException $e) {
         echo json_encode(['success' => false, 'error' => 'Fel vid hämtning av trendande taggar: ' . $e->getMessage()]);
+    }
+}
+
+/**
+ * Delete a post
+ */
+function deletePost($conn) {
+    $post_id = isset($_POST['post_id']) ? (int)$_POST['post_id'] : 0;
+    $user_id = $_SESSION['user_id'];
+    
+    if (!$post_id) {
+        echo json_encode(['success' => false, 'error' => 'Post ID is required']);
+        return;
+    }
+    
+    try {
+        // Verify post exists and belongs to the current user
+        $stmt = $conn->prepare("
+            SELECT post_id FROM social_posts 
+            WHERE post_id = :post_id AND user_id = :user_id
+        ");
+        $stmt->bindParam(':post_id', $post_id, PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        if ($stmt->rowCount() === 0) {
+            echo json_encode(['success' => false, 'error' => 'Post not found or you are not authorized to delete it']);
+            return;
+        }
+        
+        // Begin transaction
+        $conn->beginTransaction();
+        
+        // Delete related comments
+        $stmt = $conn->prepare("DELETE FROM comments WHERE post_id = :post_id");
+        $stmt->bindParam(':post_id', $post_id, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        // Delete related kudos
+        $stmt = $conn->prepare("DELETE FROM kudos WHERE post_id = :post_id");
+        $stmt->bindParam(':post_id', $post_id, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        // Delete the post
+        $stmt = $conn->prepare("DELETE FROM social_posts WHERE post_id = :post_id");
+        $stmt->bindParam(':post_id', $post_id, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        // Commit transaction
+        $conn->commit();
+        
+        echo json_encode(['success' => true]);
+    } catch (PDOException $e) {
+        // Rollback transaction on error
+        if ($conn->inTransaction()) {
+            $conn->rollBack();
+        }
+        echo json_encode(['success' => false, 'error' => 'Error deleting post: ' . $e->getMessage()]);
+    }
+}
+
+/**
+ * Delete a comment
+ */
+function deleteComment($conn) {
+    $comment_id = isset($_POST['comment_id']) ? (int)$_POST['comment_id'] : 0;
+    $user_id = $_SESSION['user_id'];
+    
+    if (!$comment_id) {
+        echo json_encode(['success' => false, 'error' => 'Kommentars-ID krävs']);
+        return;
+    }
+    
+    try {
+        // Verify comment exists and belongs to the current user
+        $stmt = $conn->prepare("
+            SELECT comment_id FROM comments 
+            WHERE comment_id = :comment_id AND user_id = :user_id
+        ");
+        $stmt->bindParam(':comment_id', $comment_id, PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        if ($stmt->rowCount() === 0) {
+            echo json_encode(['success' => false, 'error' => 'Kommentaren hittades inte eller så har du inte behörighet att ta bort den']);
+            return;
+        }
+        
+        // Delete the comment
+        $stmt = $conn->prepare("DELETE FROM comments WHERE comment_id = :comment_id");
+        $stmt->bindParam(':comment_id', $comment_id, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        echo json_encode(['success' => true]);
+    } catch (PDOException $e) {
+        echo json_encode(['success' => false, 'error' => 'Fel vid borttagning av kommentar: ' . $e->getMessage()]);
     }
 } 

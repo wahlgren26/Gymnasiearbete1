@@ -47,7 +47,30 @@ try {
 }
 
 // Check if there is a saved setting for showing/hiding progress tracker
-$show_progress_tracker = isset($_SESSION['show_progress_tracker']) ? $_SESSION['show_progress_tracker'] : true;
+try {
+    // Check if column exists
+    $stmt = $conn->prepare("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'users' AND COLUMN_NAME = 'show_progress_tracker'");
+    $stmt->execute();
+    
+    if ($stmt->rowCount() > 0) {
+        // Column exists, get value from db
+        $stmt = $conn->prepare("SELECT show_progress_tracker FROM users WHERE user_id = ?");
+        $stmt->execute([$_SESSION['user_id']]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $show_progress_tracker = $result ? (bool)$result['show_progress_tracker'] : true;
+    } else {
+        // Column doesn't exist, use default and create column
+        $show_progress_tracker = true;
+        $conn->exec("ALTER TABLE users ADD COLUMN show_progress_tracker BOOLEAN DEFAULT 1");
+        
+        // Set initial value
+        $stmt = $conn->prepare("UPDATE users SET show_progress_tracker = 1 WHERE user_id = ?");
+        $stmt->execute([$_SESSION['user_id']]);
+    }
+} catch (PDOException $e) {
+    // Fallback to session value if database error
+    $show_progress_tracker = isset($_SESSION['show_progress_tracker']) ? $_SESSION['show_progress_tracker'] : true;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

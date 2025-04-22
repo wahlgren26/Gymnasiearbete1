@@ -53,6 +53,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Update session information
         $_SESSION['firstname'] = $firstname;
         
+        // Save progress tracker setting if it exists in form data
+        if (isset($_POST['show_progress_tracker'])) {
+            $show_progress_tracker = isset($_POST['show_progress_tracker']) ? 1 : 0;
+            $stmt = $conn->prepare("
+                UPDATE users 
+                SET show_progress_tracker = ? 
+                WHERE user_id = ?
+            ");
+            $stmt->execute([$show_progress_tracker, $_SESSION['user_id']]);
+            $_SESSION['show_progress_tracker'] = (bool)$show_progress_tracker;
+        }
+        
         // If the user has uploaded a new profile image
         if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
             $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];

@@ -35,6 +35,17 @@ include 'session_handler.php';
             background-size: cover;
             opacity: 0.2;
             mix-blend-mode: overlay;
+            pointer-events: none; /* This prevents the overlay from capturing clicks */
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 5; /* Ensure content stays above the overlay */
+        }
+        
+        .hero-buttons {
+            position: relative;
+            z-index: 10; /* Higher z-index to ensure buttons are clickable */
         }
         
         .feature-card {
@@ -54,21 +65,6 @@ include 'session_handler.php';
             background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-        }
-        
-        .testimonial-card {
-            border-radius: 15px;
-            border: none;
-            overflow: hidden;
-        }
-        
-        .testimonial-img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid white;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
         .stat-card {
@@ -98,6 +94,23 @@ include 'session_handler.php';
             border-radius: 10px;
             background-color: #f8f9fa;
             border-left: 4px solid #0d6efd;
+        }
+        
+        .quick-access-card {
+            border: none;
+            border-radius: 15px;
+            transition: all 0.3s;
+        }
+        
+        .quick-access-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .quick-access-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #0d6efd;
         }
         
         @media (max-width: 768px) {
@@ -130,9 +143,14 @@ include 'session_handler.php';
                         <div class="col-lg-7 hero-content">
                             <h1 class="display-4 fw-bold mb-4">Achieve Your Fitness Goals with GymLog</h1>
                             <p class="lead mb-4">Your personal fitness journal that helps you track, analyze, and improve your workout results.</p>
-                            <div class="d-flex flex-wrap gap-2">
-                                <a href="day.php" class="btn btn-light btn-lg px-4">Start Training</a>
+                            <div class="d-flex flex-wrap gap-2 hero-buttons">
+                                <?php if(isset($_SESSION['user_id'])): ?>
+                                <a href="workout_log.php" class="btn btn-light btn-lg px-4">Start Training</a>
                                 <a href="goal.php" class="btn btn-outline-light btn-lg px-4">Set Your Goals</a>
+                                <?php else: ?>
+                                <a href="auth/signup.php" class="btn btn-light btn-lg px-4">Get Started</a>
+                                <a href="auth/signin.php" class="btn btn-outline-light btn-lg px-4">Log In</a>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <div class="col-lg-5 d-none d-lg-block">
@@ -147,7 +165,7 @@ include 'session_handler.php';
                 <div class="row g-4">
                     <div class="col-md-3 col-6">
                         <div class="card stat-card shadow-sm h-100 p-3">
-                            <div class="stat-number">1000+</div>
+                            <div class="stat-number">100%</div>
                             <div class="text-muted">Satisfied Users</div>
                         </div>
                     </div>
@@ -237,60 +255,8 @@ include 'session_handler.php';
                 </div>
             </div>
             
-            <!-- Testimonials -->
-            <div class="container mb-5">
-                <div class="text-center mb-5">
-                    <h2 class="h1 mb-3">What Our Users Say</h2>
-                    <p class="lead text-muted">Success stories from our community</p>
-                </div>
-                
-                <div class="row g-4">
-                    <div class="col-md-4">
-                        <div class="card testimonial-card shadow-sm h-100">
-                            <div class="card-body p-4">
-                                <div class="d-flex align-items-center mb-4">
-                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User Avatar" class="testimonial-img me-3">
-                                    <div>
-                                        <h4 class="h5 mb-0">Eric Johnson</h4>
-                                        <p class="text-muted small mb-0">Using GymLog for 8 months</p>
-                                    </div>
-                                </div>
-                                <p class="mb-0">"GymLog has revolutionized the way I train. I've lost 15 kg and built the muscle mass I've always dreamed of. Highly recommended!"</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card testimonial-card shadow-sm h-100">
-                            <div class="card-body p-4">
-                                <div class="d-flex align-items-center mb-4">
-                                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User Avatar" class="testimonial-img me-3">
-                                    <div>
-                                        <h4 class="h5 mb-0">Sophie Bennett</h4>
-                                        <p class="text-muted small mb-0">Using GymLog for 1 year</p>
-                                    </div>
-                                </div>
-                                <p class="mb-0">"Being able to track my progress visually has given me increased motivation. I finally reached my goal of running a half marathon thanks to the structured training plan."</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card testimonial-card shadow-sm h-100">
-                            <div class="card-body p-4">
-                                <div class="d-flex align-items-center mb-4">
-                                    <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="User Avatar" class="testimonial-img me-3">
-                                    <div>
-                                        <h4 class="h5 mb-0">Marcus Edwards</h4>
-                                        <p class="text-muted small mb-0">Using GymLog for 6 months</p>
-                                    </div>
-                                </div>
-                                <p class="mb-0">"As a beginner, I was overwhelmed by all the fitness information. GymLog made everything easy to understand and I now feel confident in my training approach."</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- CTA Section -->
+            <?php if(!isset($_SESSION['user_id'])): ?>
+            <!-- CTA Section - Only shown to non-logged in users -->
             <div class="cta-section p-5 mb-5">
                 <div class="container text-center">
                     <h2 class="display-5 fw-bold mb-4">Ready to Start Your Fitness Journey?</h2>
@@ -301,44 +267,108 @@ include 'session_handler.php';
                     </div>
                 </div>
             </div>
+            <?php endif; ?>
             
-            <!-- App Screenshots Section -->
+            <?php if(isset($_SESSION['user_id'])): ?>
+            <!-- Quick Access Section for logged in users -->
             <div class="container mb-5">
                 <div class="text-center mb-5">
-                    <h2 class="h1 mb-3">See GymLog in Action</h2>
-                    <p class="lead text-muted">Discover the features that make GymLog the perfect tool for your fitness journey</p>
+                    <h2 class="h1 mb-3">Quick Access</h2>
+                    <p class="lead text-muted">Get quick access to the most used features</p>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-lg-3 col-md-6">
+                        <a href="workout_log.php" class="text-decoration-none">
+                            <div class="card quick-access-card shadow-sm h-100 p-4 text-center">
+                                <div class="quick-access-icon">
+                                    <i class="lni lni-timer"></i>
+                                </div>
+                                <h3 class="h5 mb-2">New Workout</h3>
+                                <p class="text-muted small mb-0">Log a new workout session</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <a href="day.php" class="text-decoration-none">
+                            <div class="card quick-access-card shadow-sm h-100 p-4 text-center">
+                                <div class="quick-access-icon">
+                                    <i class="lni lni-calendar"></i>
+                                </div>
+                                <h3 class="h5 mb-2">Weekly Schedule</h3>
+                                <p class="text-muted small mb-0">Plan your training week</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <a href="goal.php" class="text-decoration-none">
+                            <div class="card quick-access-card shadow-sm h-100 p-4 text-center">
+                                <div class="quick-access-icon">
+                                    <i class="lni lni-target"></i>
+                                </div>
+                                <h3 class="h5 mb-2">Your Goals</h3>
+                                <p class="text-muted small mb-0">Set and track your goals</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <a href="vikt.php" class="text-decoration-none">
+                            <div class="card quick-access-card shadow-sm h-100 p-4 text-center">
+                                <div class="quick-access-icon">
+                                    <i class="lni lni-weight"></i>
+                                </div>
+                                <h3 class="h5 mb-2">Weight Log</h3>
+                                <p class="text-muted small mb-0">Track your weight progress</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <?php else: ?>
+            <!-- Feature Showcase - Replaces screenshots for non-logged in users -->
+            <div class="container mb-5">
+                <div class="text-center mb-5">
+                    <h2 class="h1 mb-3">Features in GymLog</h2>
+                    <p class="lead text-muted">Discover the powerful tools that help you reach your fitness goals</p>
                 </div>
                 
                 <div class="row g-4">
                     <div class="col-md-4">
                         <div class="card shadow-sm h-100">
-                            <img src="https://via.placeholder.com/600x400/f8f9fa/212529?text=Training+Schedule" class="card-img-top" alt="App Screenshot">
-                            <div class="card-body">
-                                <h5 class="card-title">Training Schedule</h5>
-                                <p class="card-text text-muted">Plan your workouts easily and efficiently.</p>
+                            <div class="card-body text-center p-4">
+                                <div class="mb-4" style="font-size: 3rem; color: #0d6efd;">
+                                    <i class="lni lni-calendar"></i>
+                                </div>
+                                <h5 class="card-title">Weekly Schedule</h5>
+                                <p class="card-text text-muted">Plan your workouts for each day of the week. Choose exercises, muscle groups and save your favorite workouts.</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="card shadow-sm h-100">
-                            <img src="https://via.placeholder.com/600x400/f8f9fa/212529?text=Progress+Tracking" class="card-img-top" alt="App Screenshot">
-                            <div class="card-body">
-                                <h5 class="card-title">Progress Tracking</h5>
-                                <p class="card-text text-muted">Follow your development with detailed statistics and graphs.</p>
+                            <div class="card-body text-center p-4">
+                                <div class="mb-4" style="font-size: 3rem; color: #0d6efd;">
+                                    <i class="lni lni-stats-up"></i>
+                                </div>
+                                <h5 class="card-title">Progress Analysis</h5>
+                                <p class="card-text text-muted">Follow your development with detailed statistics and graphs. Track weight gains, repetitions and progress over time.</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="card shadow-sm h-100">
-                            <img src="https://via.placeholder.com/600x400/f8f9fa/212529?text=Goal+Setting" class="card-img-top" alt="App Screenshot">
-                            <div class="card-body">
+                            <div class="card-body text-center p-4">
+                                <div class="mb-4" style="font-size: 3rem; color: #0d6efd;">
+                                    <i class="lni lni-target"></i>
+                                </div>
                                 <h5 class="card-title">Goal Setting</h5>
-                                <p class="card-text text-muted">Set and achieve your personal fitness goals.</p>
+                                <p class="card-text text-muted">Set personal training goals, track your progress and get motivation when you achieve your goals.</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <?php endif; ?>
             
             <!-- Footer -->
             <footer class="container mt-5 pt-5 pb-3">
