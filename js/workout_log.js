@@ -4,9 +4,9 @@ function saveEditedExercise() {
     const exerciseItemIndex = editModal.dataset.exerciseItem;
     const exerciseContainer = document.getElementById('exercise-container');
     const exerciseItem = exerciseContainer.children[exerciseItemIndex];
-    
+
     if (!exerciseItem) return;
-    
+
     // Get edited values
     const editedExercise = {
         name: document.getElementById('edit-exercise-name').value,
@@ -16,20 +16,20 @@ function saveEditedExercise() {
         weight: parseFloat(document.getElementById('edit-exercise-weight').value) || 0,
         notes: document.getElementById('edit-exercise-notes').value.trim()
     };
-    
+
     // Update exercise item with new values
     exerciseItem.dataset.exercise = JSON.stringify(editedExercise);
-    
+
     // Update the displayed text
     let setsRepsText = `${editedExercise.sets} sets × ${editedExercise.reps} reps`;
     if (editedExercise.weight && editedExercise.weight > 0) {
         setsRepsText += ` × ${editedExercise.weight} kg`;
     }
-    
+
     exerciseItem.querySelector('h6').textContent = editedExercise.name;
     exerciseItem.querySelector('.badge').textContent = editedExercise.category;
     exerciseItem.querySelector('small').textContent = setsRepsText;
-    
+
     // Update or create notes div
     const notesDiv = exerciseItem.querySelector('.small');
     if (editedExercise.notes) {
@@ -44,7 +44,7 @@ function saveEditedExercise() {
     } else if (notesDiv) {
         notesDiv.remove();
     }
-    
+
     // Close the modal
     const editExerciseModal = bootstrap.Modal.getInstance(document.getElementById('edit-exercise-modal'));
     editExerciseModal.hide();
@@ -54,7 +54,7 @@ function saveEditedExercise() {
 function editScheduleDay(day) {
     // Spara dagen som ska redigeras i session storage
     sessionStorage.setItem('editScheduleDay', day);
-    
+
     // Navigera till day.php
     window.location.href = 'day.php';
 }
@@ -62,14 +62,14 @@ function editScheduleDay(day) {
 document.addEventListener('DOMContentLoaded', function() {
     // Set today's date as default
     document.getElementById('workout-date').valueAsDate = new Date();
-    
+
     // Timer variables
     let timerInterval;
     let timerStartTime;
     let timerPausedTime = 0;
     let isTimerRunning = false;
     let isPaused = false;
-    
+
     // DOM elements
     const startBtn = document.getElementById('start-btn');
     const pauseBtn = document.getElementById('pause-btn');
@@ -81,30 +81,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const addExerciseBtn = document.getElementById('add-exercise-btn');
     const exerciseContainer = document.getElementById('exercise-container');
     const loadFromScheduleBtn = document.getElementById('load-from-schedule');
-    
+
     // Create edit exercise modal
     createEditExerciseModal();
-    
+
     // Clear any existing workout history on page load
     clearWorkoutHistory();
-    
+
     // Force reload of workout templates
     localStorage.removeItem('workoutTemplates');
-    
+
     // Helper function to generate a unique ID
     function generateUniqueId() {
         return Date.now() + Math.random().toString(36).substring(2, 9);
     }
-    
+
     // Function to clear workout history
     function clearWorkoutHistory() {
         // Tog bort raden som rensar workoutLogs för att inte radera sparade träningar vid varje siduppdatering
         // console.log("Workout history clearing disabled");
     }
-    
+
     // Exercise list from workout.js for select dropdown
     const exerciseOptions = [];
-    
+
     // Add all exercises from exerciseDatabase in workout.js to the list
     for (const category in exerciseDatabase) {
         if (category !== 'Rest Day') {
@@ -120,29 +120,29 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
-    
+
     // Populate exercise selector
     function populateExerciseSelect() {
         const select = document.getElementById('exercise-name');
-        
+
         // Group by category
         const categories = {};
-        
+
         exerciseOptions.forEach(exercise => {
             if (!categories[exercise.category]) {
                 categories[exercise.category] = [];
             }
             categories[exercise.category].push(exercise);
         });
-        
+
         // Clear current options
         select.innerHTML = '<option value="">Select exercise...</option>';
-        
+
         // Add categories with exercises
         for (const category in categories) {
             const optgroup = document.createElement('optgroup');
             optgroup.label = category;
-            
+
             categories[category].forEach(exercise => {
                 const option = document.createElement('option');
                 option.value = exercise.name;
@@ -152,11 +152,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 option.dataset.link = exercise.link;
                 optgroup.appendChild(option);
             });
-            
+
             select.appendChild(optgroup);
         }
     }
-    
+
     // Timer functions
     function startTimer() {
         if (!isTimerRunning) {
@@ -164,79 +164,79 @@ document.addEventListener('DOMContentLoaded', function() {
             timerInterval = setInterval(updateTimer, 1000);
             isTimerRunning = true;
             isPaused = false;
-            
+
             startBtn.disabled = true;
             pauseBtn.disabled = false;
             stopBtn.disabled = false;
             saveWorkoutBtn.disabled = true;
-            
+
             statusBadge.textContent = 'In Progress';
             statusBadge.className = 'badge bg-success rounded-pill';
             activeWorkoutCard.classList.add('workout-in-progress');
         }
     }
-    
+
     function pauseTimer() {
         if (isTimerRunning && !isPaused) {
             clearInterval(timerInterval);
             timerPausedTime = Date.now() - timerStartTime;
             isTimerRunning = false;
             isPaused = true;
-            
+
             startBtn.disabled = false;
             startBtn.innerHTML = '<i class="lni lni-play"></i> Resume';
             pauseBtn.disabled = true;
             stopBtn.disabled = false;
-            
+
             statusBadge.textContent = 'Paused';
             statusBadge.className = 'badge bg-warning rounded-pill';
             activeWorkoutCard.classList.remove('workout-in-progress');
         }
     }
-    
+
     function stopTimer() {
         if (isTimerRunning || isPaused) {
             if (isTimerRunning) {
                 clearInterval(timerInterval);
                 timerPausedTime = Date.now() - timerStartTime;
             }
-            
+
             isTimerRunning = false;
-            
+
             startBtn.disabled = true;
             pauseBtn.disabled = true;
             stopBtn.disabled = true;
             saveWorkoutBtn.disabled = false;
-            
+
             statusBadge.textContent = 'Completed';
             statusBadge.className = 'badge bg-danger rounded-pill';
             activeWorkoutCard.classList.remove('workout-in-progress');
         }
     }
-    
+
     function updateTimer() {
         const elapsedTime = Date.now() - timerStartTime;
         timerDisplay.textContent = formatTime(elapsedTime);
     }
-    
+
     function formatTime(time) {
         const seconds = Math.floor((time / 1000) % 60);
         const minutes = Math.floor((time / (1000 * 60)) % 60);
         const hours = Math.floor((time / (1000 * 60 * 60)));
-        
+
         return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
-    
+
     // Add exercise to workout
     function addExerciseToWorkout(exercise) {
         const exerciseItem = document.createElement('div');
         exerciseItem.className = 'exercise-log p-3 bg-light rounded-3 mb-3';
-        
+
         let setsRepsText = `${exercise.sets} sets × ${exercise.reps} reps`;
         if (exercise.weight && exercise.weight > 0) {
             setsRepsText += ` × ${exercise.weight} kg`;
         }
-        
+
         // Skapa en array för individuella set om den inte redan finns
         if (!exercise.setDetails) {
             exercise.setDetails = [];
@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         }
-        
+
         exerciseItem.innerHTML = `
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <div>
@@ -313,28 +313,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
         `;
-        
+
         exerciseContainer.appendChild(exerciseItem);
-        
+
         // Spara original-data för senare användning
         exerciseItem.dataset.exercise = JSON.stringify(exercise);
-        
+
         // Add listener to remove the exercise
         exerciseItem.querySelector('.remove-exercise').addEventListener('click', function() {
             exerciseItem.remove();
         });
-        
+
         // Add listener to edit the exercise
         exerciseItem.querySelector('.edit-exercise').addEventListener('click', function() {
             openEditExerciseModal(exerciseItem);
         });
-        
+
         // Add listener to add new set
         exerciseItem.querySelector('.add-set').addEventListener('click', function() {
             const setDetailsElement = exerciseItem.querySelector('.set-details');
             const exercise = JSON.parse(exerciseItem.dataset.exercise);
             const newSetNumber = exercise.setDetails.length + 1;
-            
+
             // Lägg till ett nytt set i exercise object
             exercise.setDetails.push({
                 setNumber: newSetNumber,
@@ -342,10 +342,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 actualWeight: 0,
                 completed: false
             });
-            
+
             // Uppdatera dataset
             exerciseItem.dataset.exercise = JSON.stringify(exercise);
-            
+
             // Skapa ny rad för nya setet
             const newRow = document.createElement('tr');
             newRow.dataset.set = newSetNumber;
@@ -365,47 +365,47 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </td>
             `;
-            
+
             setDetailsElement.appendChild(newRow);
             addSetInputListeners(newRow, exerciseItem);
         });
-        
+
         // Add listeners to set inputs
         const setRows = exerciseItem.querySelectorAll('.set-details tr');
         setRows.forEach(row => {
             addSetInputListeners(row, exerciseItem);
         });
     }
-    
+
     // Helper function to add input listeners to set rows
     function addSetInputListeners(row, exerciseItem) {
         const setNumber = parseInt(row.dataset.set);
         const repsInput = row.querySelector('.set-reps');
         const weightInput = row.querySelector('.set-weight');
         const completedCheck = row.querySelector('.set-completed');
-        
+
         // Listen for changes on the inputs
         [repsInput, weightInput, completedCheck].forEach(element => {
             element.addEventListener('change', function() {
                 const exercise = JSON.parse(exerciseItem.dataset.exercise);
                 const setIndex = setNumber - 1;
-                
+
                 if (setIndex >= 0 && setIndex < exercise.setDetails.length) {
                     exercise.setDetails[setIndex].actualReps = parseInt(repsInput.value) || 0;
                     exercise.setDetails[setIndex].actualWeight = parseFloat(weightInput.value) || 0;
                     exercise.setDetails[setIndex].completed = completedCheck.checked;
-                    
+
                     // Uppdatera dataset
                     exerciseItem.dataset.exercise = JSON.stringify(exercise);
                 }
             });
         });
     }
-    
+
     // Open modal to edit an exercise
     function openEditExerciseModal(exerciseItem) {
         const exercise = JSON.parse(exerciseItem.dataset.exercise);
-        
+
         // Populate modal with exercise data
         document.getElementById('edit-exercise-name').value = exercise.name;
         document.getElementById('edit-exercise-category').value = exercise.category;
@@ -413,16 +413,16 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('edit-exercise-reps').value = exercise.reps;
         document.getElementById('edit-exercise-weight').value = exercise.weight || '';
         document.getElementById('edit-exercise-notes').value = exercise.notes || '';
-        
+
         // Set the reference to the exercise item being edited
         document.getElementById('edit-exercise-modal').dataset.editingExercise = exerciseItem.dataset.exercise;
         document.getElementById('edit-exercise-modal').dataset.exerciseItem = Array.from(exerciseContainer.children).indexOf(exerciseItem);
-        
+
         // Show the modal
         const editExerciseModal = new bootstrap.Modal(document.getElementById('edit-exercise-modal'));
         editExerciseModal.show();
     }
-    
+
     // Save workout
     function saveWorkout() {
         const workoutName = document.getElementById('workout-name').value.trim() || 'Unnamed Workout';
@@ -430,7 +430,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const workoutLocation = document.getElementById('workout-location').value.trim();
         const workoutNotes = document.getElementById('workout-notes').value.trim();
         const workoutDuration = timerDisplay.textContent;
-        
+
         // Collect exercises
         const exercises = [];
         document.querySelectorAll('.exercise-log').forEach(item => {
@@ -438,7 +438,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const exerciseData = JSON.parse(item.dataset.exercise);
             exercises.push(exerciseData);
         });
-        
+
         // Create workout object
         const workout = {
             id: Date.now(), // Unique ID based on timestamp
@@ -451,31 +451,31 @@ document.addEventListener('DOMContentLoaded', function() {
             startTime: new Date(timerStartTime).toISOString(),
             endTime: new Date(timerStartTime + timerPausedTime).toISOString()
         };
-        
+
         // Get existing saved workouts using the user-specific function
         let savedWorkouts = getUserWorkouts();
         savedWorkouts.push(workout);
-        
+
         // Save back using the user-specific function
         saveUserWorkouts(savedWorkouts);
-        
+
         // Update UI
         loadWorkoutHistory();
         loadWorkoutTemplates();
-        
+
         // Create a post in social feed to share the workout if checkbox is checked
         const shareToSocial = document.getElementById('share-to-social').checked;
         if (shareToSocial) {
             shareWorkoutToSocialFeed(workout);
         }
-        
+
         // Reset the form
         resetWorkoutForm();
-        
+
         // Show confirmation
         alert('Workout saved successfully!');
     }
-    
+
     // Share workout to social feed
     function shareWorkoutToSocialFeed(workout) {
         // Create a nicely formatted message
@@ -493,45 +493,45 @@ document.addEventListener('DOMContentLoaded', function() {
                 return exerciseText;
             }).join(', ');
         }
-        
+
         let message = `I just completed a workout: "${workout.name}" 💪\n\n`;
         message += `Duration: ${workout.duration}\n`;
-        
+
         if (workout.location) {
             message += `Location: ${workout.location}\n`;
         }
-        
+
         message += `\nExercises: ${exerciseList}`;
-        
+
         if (workout.notes) {
             message += `\n\nNotes: ${workout.notes}`;
         }
-        
+
         message += `\n\n#workout #fitness #gymlog`;
-        
+
         // Send the post to the API
         const formData = new FormData();
         formData.append('content', message);
         formData.append('post_type', 'workout');
         formData.append('workout_id', workout.id); // Include the workout ID
-        
+
         fetch('api/social_api.php?action=create_post', {
             method: 'POST',
             body: formData
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                console.log('Workout shared to social feed successfully!');
-            } else {
-                console.error('Failed to share workout to social feed:', data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error sharing workout to social feed:', error);
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Workout shared to social feed successfully!');
+                } else {
+                    console.error('Failed to share workout to social feed:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error sharing workout to social feed:', error);
+            });
     }
-    
+
     // Reset the form after a workout has been saved
     function resetWorkoutForm() {
         document.getElementById('workout-name').value = '';
@@ -539,48 +539,48 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('workout-location').value = '';
         document.getElementById('workout-notes').value = '';
         exerciseContainer.innerHTML = '';
-        
+
         timerDisplay.textContent = '00:00:00';
         timerPausedTime = 0;
-        
+
         startBtn.disabled = false;
         startBtn.innerHTML = '<i class="lni lni-play"></i> Start';
         pauseBtn.disabled = true;
         stopBtn.disabled = true;
         saveWorkoutBtn.disabled = true;
-        
+
         statusBadge.textContent = 'Ready to Start';
         statusBadge.className = 'badge bg-primary rounded-pill';
     }
-    
+
     // Handle workout history
     function loadWorkoutHistory() {
         const historyContainer = document.getElementById('workout-history-container');
         const noHistory = document.getElementById('no-history');
-        
+
         // Get saved workouts using the user-specific function
         const savedWorkouts = getUserWorkouts();
-        
+
         if (savedWorkouts.length === 0) {
             noHistory.style.display = 'block';
             historyContainer.innerHTML = '';
             historyContainer.appendChild(noHistory);
             return;
         }
-        
+
         // Sort workouts with newest first
         savedWorkouts.sort((a, b) => new Date(b.date) - new Date(a.date));
-        
+
         // Hide no-history message
         noHistory.style.display = 'none';
-        
+
         // Clear history container and create new structure
         historyContainer.innerHTML = '';
-        
+
         savedWorkouts.forEach(workout => {
             const historyItem = document.createElement('div');
             historyItem.className = 'col-md-6 col-lg-4 mb-4';
-            
+
             // Format date
             const workoutDate = new Date(workout.date);
             const formattedDate = workoutDate.toLocaleDateString('en-US', {
@@ -589,7 +589,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 month: 'long',
                 day: 'numeric'
             });
-            
+
             historyItem.innerHTML = `
                 <div class="card shadow border-0 rounded-4 workout-card" data-workout-id="${workout.id}">
                     <div class="card-body p-4">
@@ -601,8 +601,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="small text-muted">
                                 <i class="lni lni-calendar me-1"></i> ${formattedDate}
                             </div>
-                            ${workout.location ? 
-                                `<div class="small text-muted">
+                            ${workout.location ?
+                `<div class="small text-muted">
                                     <i class="lni lni-map-marker me-1"></i> ${workout.location}
                                  </div>` : ''}
                         </div>
@@ -630,29 +630,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
             `;
-            
+
             historyContainer.appendChild(historyItem);
-            
+
             // Add event listeners for buttons
             const viewDetailsBtn = historyItem.querySelector('.view-details');
             const useTemplateBtn = historyItem.querySelector('.use-template');
             const deleteWorkoutBtn = historyItem.querySelector('.delete-workout');
-            
+
             viewDetailsBtn.addEventListener('click', () => showWorkoutDetails(workout.id));
             useTemplateBtn.addEventListener('click', () => useWorkoutAsTemplate(workout.id));
             deleteWorkoutBtn.addEventListener('click', () => deleteWorkout(workout.id));
         });
     }
-    
+
     // Show workout details in a modal
     function showWorkoutDetails(workoutId) {
         const savedWorkouts = getUserWorkouts();
         const workout = savedWorkouts.find(w => w.id === workoutId);
-        
+
         if (!workout) return;
-        
+
         const detailsContent = document.getElementById('workout-details-content');
-        
+
         // Format date
         const workoutDate = new Date(workout.date);
         const formattedDate = workoutDate.toLocaleDateString('en-US', {
@@ -661,18 +661,18 @@ document.addEventListener('DOMContentLoaded', function() {
             month: 'long',
             day: 'numeric'
         });
-        
+
         let exercisesHtml = '';
-        
+
         if (workout.exercises.length > 0) {
             exercisesHtml = '<div class="mt-4"><h5 class="mb-3">Exercises</h5><div class="list-group">';
-            
+
             workout.exercises.forEach(exercise => {
                 let exerciseDetails = `${exercise.sets} sets × ${exercise.reps} reps`;
                 if (exercise.weight) {
                     exerciseDetails += ` × ${exercise.weight} kg`;
                 }
-                
+
                 // Skapa HTML för setdetaljer
                 let setDetailsHtml = '';
                 if (exercise.setDetails && exercise.setDetails.length > 0) {
@@ -695,9 +695,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                             <td class="small">${set.actualReps || '-'}</td>
                                             <td class="small">${set.actualWeight || '-'}</td>
                                             <td class="small">
-                                                ${set.completed ? 
-                                                    '<span class="badge bg-success">Completed</span>' : 
-                                                    '<span class="badge bg-secondary">Not completed</span>'}
+                                                ${set.completed ?
+                        '<span class="badge bg-success">Completed</span>' :
+                        '<span class="badge bg-secondary">Not completed</span>'}
                                             </td>
                                         </tr>
                                     `).join('')}
@@ -706,7 +706,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     `;
                 }
-                
+
                 exercisesHtml += `
                     <div class="list-group-item">
                         <div class="d-flex justify-content-between align-items-center">
@@ -719,10 +719,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 `;
             });
-            
+
             exercisesHtml += '</div></div>';
         }
-        
+
         // Show workout details in the modal
         detailsContent.innerHTML = `
             <div class="row mb-4">
@@ -731,8 +731,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="text-muted mb-2">
                         <i class="lni lni-calendar me-1"></i> ${formattedDate}
                     </div>
-                    ${workout.location ? 
-                        `<div class="text-muted mb-2">
+                    ${workout.location ?
+            `<div class="text-muted mb-2">
                             <i class="lni lni-map-marker me-1"></i> ${workout.location}
                          </div>` : ''}
                 </div>
@@ -751,68 +751,68 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
             
-            ${workout.notes ? 
-                `<div class="mb-4">
+            ${workout.notes ?
+            `<div class="mb-4">
                     <h5 class="mb-2">Notes</h5>
                     <div class="p-3 bg-light rounded-3">${workout.notes}</div>
                  </div>` : ''}
             
             ${exercisesHtml}
         `;
-        
+
         // Show the modal
         const workoutDetailsModal = new bootstrap.Modal(document.getElementById('workoutDetailsModal'));
         workoutDetailsModal.show();
     }
-    
+
     // Use a saved workout as a template
     function useWorkoutAsTemplate(workoutId) {
         let workout;
-        
+
         // Try to find the workout in the history first
         const savedWorkouts = getUserWorkouts();
         workout = savedWorkouts.find(w => w.id === workoutId);
-        
+
         // If not found in history, check templates
         if (!workout) {
             const templates = getUserTemplates();
             workout = templates.find(w => w.id === workoutId);
         }
-        
+
         if (!workout) return;
-        
+
         // Reset the form first
         resetWorkoutForm();
-        
+
         // Fill the form with data from the workout
         document.getElementById('workout-name').value = workout.name;
         document.getElementById('workout-location').value = workout.location || '';
         document.getElementById('workout-notes').value = workout.notes || '';
-        
+
         // Add exercises
         exerciseContainer.innerHTML = '';
         workout.exercises.forEach(exercise => {
             addExerciseToWorkout(exercise);
         });
-        
+
         // Enable start button and highlight it
         startBtn.disabled = false;
         startBtn.classList.add('btn-pulse');
         setTimeout(() => startBtn.classList.remove('btn-pulse'), 2000);
-        
+
         // Visa och aktivera timerkontrollerna
         document.querySelector('.timer-controls').classList.remove('d-none');
-        
+
         // Show the workout form
         document.getElementById('workout-form-container').classList.remove('d-none');
-        
+
         // Scroll up to the form
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
         });
     }
-    
+
     // Delete a workout
     function deleteWorkout(workoutId) {
         if (confirm('Are you sure you want to delete this workout?')) {
@@ -821,7 +821,7 @@ document.addEventListener('DOMContentLoaded', function() {
             savedWorkouts = savedWorkouts.filter(w => w.id !== workoutId);
             // Save user workouts
             saveUserWorkouts(savedWorkouts);
-            
+
             // Ta bort från DOM
             const workoutElement = document.querySelector(`.workout-card[data-workout-id="${workoutId}"]`);
             if (workoutElement) {
@@ -830,55 +830,55 @@ document.addEventListener('DOMContentLoaded', function() {
                     parentElement.remove();
                 }
             }
-            
+
             // Kontrollera om vi behöver visa "no history" meddelandet
             if (savedWorkouts.length === 0) {
                 const historyContainer = document.getElementById('workout-history-container');
                 const noHistory = document.getElementById('no-history');
-                
+
                 noHistory.style.display = 'block';
                 historyContainer.innerHTML = '';
                 historyContainer.appendChild(noHistory);
             }
         }
     }
-    
+
     // Workout templates
     function loadWorkoutTemplates() {
         // Get templates for current user
         const templates = getUserTemplates();
         const templateSection = document.getElementById('workoutTemplates');
-        
+
         if (!templateSection) return;
-        
+
         templateSection.innerHTML = '';
-        
+
         if (templates.length === 0) {
             templateSection.innerHTML = '<p class="text-center py-3">No workout templates available. Add your first workout template!</p>';
             return;
         }
-        
+
         templates.forEach(template => {
             const templateCard = document.createElement('div');
             templateCard.className = 'card mb-3';
-            
+
             const cardBody = document.createElement('div');
             cardBody.className = 'card-body';
-            
+
             const title = document.createElement('h5');
             title.className = 'card-title';
             title.textContent = template.name;
-            
+
             const exerciseList = document.createElement('ul');
             exerciseList.className = 'list-group list-group-flush mb-3';
-            
+
             template.exercises.forEach(exercise => {
                 const exerciseItem = document.createElement('li');
                 exerciseItem.className = 'list-group-item';
                 exerciseItem.textContent = `${exercise.name} - ${exercise.sets} sets x ${exercise.reps} reps`;
                 exerciseList.appendChild(exerciseItem);
             });
-            
+
             const useTemplateBtn = document.createElement('button');
             useTemplateBtn.className = 'btn btn-primary me-2';
             useTemplateBtn.textContent = 'Use Template';
@@ -886,7 +886,7 @@ document.addEventListener('DOMContentLoaded', function() {
             useTemplateBtn.addEventListener('click', function() {
                 useWorkoutAsTemplate(template.id);
             });
-            
+
             const deleteTemplateBtn = document.createElement('button');
             deleteTemplateBtn.className = 'btn btn-danger';
             deleteTemplateBtn.textContent = 'Delete';
@@ -894,25 +894,25 @@ document.addEventListener('DOMContentLoaded', function() {
             deleteTemplateBtn.addEventListener('click', function() {
                 deleteWorkoutTemplate(template.id);
             });
-            
+
             cardBody.appendChild(title);
             cardBody.appendChild(exerciseList);
             cardBody.appendChild(useTemplateBtn);
             cardBody.appendChild(deleteTemplateBtn);
-            
+
             templateCard.appendChild(cardBody);
             templateSection.appendChild(templateCard);
         });
     }
-    
+
     // Handle training schedule
     function openScheduleModal() {
         const scheduleList = document.getElementById('schedule-days-list');
         scheduleList.innerHTML = '';
-        
+
         // Get saved training days from localStorage (should be created by day.php)
         const savedDays = getSavedWorkoutDays();
-        
+
         if (Object.keys(savedDays).length === 0) {
             scheduleList.innerHTML = `
                 <div class="alert alert-info">
@@ -922,16 +922,16 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         } else {
             const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-            
+
             days.forEach(day => {
                 const dayLower = day.toLowerCase();
                 if (savedDays[dayLower]) {
                     const workoutPlan = savedDays[dayLower];
-                    
+
                     const item = document.createElement('button');
                     item.className = 'list-group-item list-group-item-action';
                     item.type = 'button';
-                    
+
                     item.innerHTML = `
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -951,15 +951,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                         </div>
                     `;
-                    
+
                     scheduleList.appendChild(item);
-                    
+
                     // Add click event
                     item.addEventListener('click', () => {
                         loadScheduleDay(dayLower, workoutPlan);
                         bootstrap.Modal.getInstance(document.getElementById('scheduleModal')).hide();
                     });
-                    
+
                     // Add edit button click event
                     const editBtn = item.querySelector('.edit-day-btn');
                     editBtn.addEventListener('click', () => {
@@ -969,33 +969,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         }
-        
+
         // Show the modal
         const scheduleModal = new bootstrap.Modal(document.getElementById('scheduleModal'));
         scheduleModal.show();
     }
-    
+
     // Load training day from schedule
     function loadScheduleDay(day, workoutPlan) {
         if (!workoutPlan || !workoutPlan.exercises || workoutPlan.exercises.length === 0) {
             alert('This training day has no exercises.');
             return;
         }
-        
+
         // Reset the form first
         resetWorkoutForm();
-        
+
         // Fill in basic information
         document.getElementById('workout-name').value = `${day.charAt(0).toUpperCase() + day.slice(1)} Workout`;
-        
+
         // Add exercises from the schedule
         exerciseContainer.innerHTML = '';
-        
+
         workoutPlan.exercises.forEach(scheduleExercise => {
             // Find exercise category
             let category = '';
             for (const cat in exerciseDatabase) {
-                const found = exerciseDatabase[cat].find(ex => 
+                const found = exerciseDatabase[cat].find(ex =>
                     typeof ex === 'object' && ex.name === scheduleExercise.name
                 );
                 if (found) {
@@ -1003,7 +1003,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     break;
                 }
             }
-            
+
             // Create default values for sets and reps
             const exercise = {
                 name: scheduleExercise.name,
@@ -1013,11 +1013,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 weight: 0,
                 notes: ''
             };
-            
+
             addExerciseToWorkout(exercise);
         });
     }
-    
+
     // Add pulse animation style to the head
     const style = document.createElement('style');
     style.textContent = `
@@ -1031,23 +1031,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     `;
     document.head.appendChild(style);
-    
+
     // Event listeners
     startBtn.addEventListener('click', startTimer);
     pauseBtn.addEventListener('click', pauseTimer);
     stopBtn.addEventListener('click', stopTimer);
     saveWorkoutBtn.addEventListener('click', saveWorkout);
     loadFromScheduleBtn.addEventListener('click', openScheduleModal);
-    
+
     // Modal for adding exercise
     const addExerciseModal = new bootstrap.Modal(document.getElementById('addExerciseModal'));
-    
+
     // Hantera byte mellan fördefinierade och anpassade övningar
     document.querySelectorAll('input[name="exercise-type"]').forEach(radio => {
         radio.addEventListener('change', function() {
             const presetSection = document.getElementById('preset-exercise-section');
             const customSection = document.getElementById('custom-exercise-section');
-            
+
             if (this.value === 'preset') {
                 presetSection.style.display = 'block';
                 customSection.style.display = 'none';
@@ -1057,15 +1057,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
+
     addExerciseBtn.addEventListener('click', function() {
         populateExerciseSelect();
-        
+
         // Återställ radioknapparna
         document.getElementById('exercise-type-preset').checked = true;
         document.getElementById('preset-exercise-section').style.display = 'block';
         document.getElementById('custom-exercise-section').style.display = 'none';
-        
+
         // Rensa alla fält
         document.getElementById('custom-exercise-name').value = '';
         document.getElementById('custom-exercise-category').value = '';
@@ -1073,28 +1073,28 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('exercise-reps').value = '10';
         document.getElementById('exercise-weight').value = '';
         document.getElementById('exercise-notes').value = '';
-        
+
         addExerciseModal.show();
     });
-    
+
     document.getElementById('save-exercise-btn').addEventListener('click', function() {
         let exercise = {};
         const isCustomExercise = document.getElementById('exercise-type-custom').checked;
-        
+
         if (isCustomExercise) {
             const customName = document.getElementById('custom-exercise-name').value.trim();
             const customCategory = document.getElementById('custom-exercise-category').value;
-            
+
             if (!customName) {
                 alert('Please enter an exercise name.');
                 return;
             }
-            
+
             if (!customCategory) {
                 alert('Please select a category.');
                 return;
             }
-            
+
             exercise = {
                 name: customName,
                 category: customCategory,
@@ -1106,12 +1106,12 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             const exerciseSelect = document.getElementById('exercise-name');
             const selectedOption = exerciseSelect.options[exerciseSelect.selectedIndex];
-            
+
             if (!exerciseSelect.value) {
                 alert('Please select an exercise first.');
                 return;
             }
-            
+
             exercise = {
                 name: exerciseSelect.value,
                 category: selectedOption.dataset.category || 'Other',
@@ -1121,11 +1121,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 notes: document.getElementById('exercise-notes').value.trim()
             };
         }
-        
+
         addExerciseToWorkout(exercise);
         addExerciseModal.hide();
     });
-    
+
     // Load workout history and templates when the page loads
     loadWorkoutHistory();
     loadWorkoutTemplates();
@@ -1135,7 +1135,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function createEditExerciseModal() {
     // Check if the modal already exists
     if (document.getElementById('edit-exercise-modal')) return;
-    
+
     // Create the modal structure
     const modalHTML = `
     <div class="modal fade" id="edit-exercise-modal" tabindex="-1" aria-labelledby="editExerciseModalLabel" aria-hidden="true">
@@ -1183,10 +1183,10 @@ function createEditExerciseModal() {
         </div>
     </div>
     `;
-    
+
     // Append the modal to the body
     document.body.insertAdjacentHTML('beforeend', modalHTML);
-    
+
     // Add event listener for the save button
     document.getElementById('save-edited-exercise-btn').addEventListener('click', saveEditedExercise);
 }
@@ -1199,13 +1199,13 @@ function getUserId() {
     if (userIdField && userIdField.value) {
         return userIdField.value;
     }
-    
+
     // Fallback to sessionstorage
     const sessionUserId = sessionStorage.getItem('logged_in_user_id');
     if (sessionUserId) {
         return sessionUserId;
     }
-    
+
     // If all else fails, use the timestamp to create a unique ID for this browser
     // This ensures each browser/device at least sees its own workouts
     let uniqueBrowserId = localStorage.getItem('unique_browser_id');
@@ -1245,13 +1245,13 @@ function deleteWorkoutTemplate(templateId) {
     if (confirm('Are you sure you want to delete this workout template?')) {
         // Hämta användarens mallar
         let templates = getUserTemplates();
-        
+
         // Filtrera bort den valda mallen
         templates = templates.filter(t => t.id !== templateId);
-        
+
         // Spara den uppdaterade listan
         saveUserTemplates(templates);
-        
+
         // Uppdatera UI
         loadWorkoutTemplates();
     }

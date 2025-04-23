@@ -388,7 +388,7 @@ include 'session_handler.php';
                     </div>
                     <div class="col-md-4 mb-4">
                         <h3 class="h5 mb-3">Contact</h3>
-                        <p class="text-muted">Have questions or feedback? <br>Email us at: <a href="mailto:support@gymlog.com" class="text-decoration-none">support@gymlog.com</a></p>
+                        <p class="text-muted">Have questions or feedback? <br>Email us at: <a href="mailto:gymlognti@gmail.com" class="text-decoration-none">gymlognti@gmail.com</a></p>
                     </div>
                 </div>
                 <hr class="my-4">
