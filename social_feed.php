@@ -21,6 +21,32 @@ if (!isset($_SESSION["user_id"])) {
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="css/sidebarstyle.css">
     <link rel="stylesheet" href="assets/css/social.css">
+    <style>
+        .hashtag {
+            color: #0d6efd;
+            text-decoration: none;
+        }
+        .hashtag:hover {
+            text-decoration: underline;
+        }
+        #tag-filter-controls {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        .page-title {
+            position: relative;
+        }
+        .filter-badge {
+            display: inline-block;
+            padding: 0.25em 0.5em;
+            background: #f8f9fa;
+            border-radius: 20px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+    </style>
     <!-- Add any additional CSS/JS imports here -->
 </head>
 
@@ -38,6 +64,15 @@ if (!isset($_SESSION["user_id"])) {
                             <div class="page-title">
                     <h2>Social Feed</h2>
                     <p>Discover what other users are training and share your progress!</p>
+                    <div id="tag-filter-controls" style="display: none;">
+                        <div class="d-flex align-items-center">
+                            <span class="me-2">Filtering by tag:</span>
+                            <span id="current-tag-badge" class="filter-badge me-2"></span>
+                            <a href="social_feed.php" class="btn btn-outline-primary btn-sm">
+                                <i class="lni lni-arrow-left"></i> Back to main feed
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -224,7 +259,16 @@ if (!isset($_SESSION["user_id"])) {
             loadingIndicator.style.display = 'block';
         }
         
-        fetch(`api/social_api.php?action=get_posts&page=${page}`)
+        // Check if there's a tag parameter in the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        let apiUrl = `api/social_api.php?action=get_posts&page=${page}`;
+        
+        if (urlParams.has('tag')) {
+            const tag = urlParams.get('tag');
+            apiUrl += `&tag=${encodeURIComponent(tag)}`;
+        }
+        
+        fetch(apiUrl)
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -236,7 +280,13 @@ if (!isset($_SESSION["user_id"])) {
                         renderPosts(data.posts);
                         document.getElementById('load-more-container').style.display = 'block';
                     } else if (page === 1) {
-                        document.getElementById('posts-container').innerHTML = '<div class="alert alert-info">No posts to display. Be the first to share something!</div>';
+                        const urlParams = new URLSearchParams(window.location.search);
+                        if (urlParams.has('tag')) {
+                            const tag = urlParams.get('tag');
+                            document.getElementById('posts-container').innerHTML = `<div class="alert alert-info">No posts found with tag #${tag}.</div>`;
+                        } else {
+                            document.getElementById('posts-container').innerHTML = '<div class="alert alert-info">No posts to display. Share something first!</div>';
+                        }
                     } else {
                         document.getElementById('load-more-container').style.display = 'none';
                     }
@@ -246,7 +296,7 @@ if (!isset($_SESSION["user_id"])) {
                     if (loadingIndicator) {
                         loadingIndicator.style.display = 'none';
                     }
-                    document.getElementById('posts-container').innerHTML = '<div class="alert alert-warning">Could not load posts at this time. Try refreshing the page.</div>';
+                    document.getElementById('posts-container').innerHTML = '<div class="alert alert-warning">Could not load posts right now. Please try again later.</div>';
                 }
             })
             .catch(error => {
@@ -255,7 +305,7 @@ if (!isset($_SESSION["user_id"])) {
                 if (loadingIndicator) {
                     loadingIndicator.style.display = 'none';
                 }
-                document.getElementById('posts-container').innerHTML = '<div class="alert alert-warning">Could not load posts at this time. Try refreshing the page.</div>';
+                document.getElementById('posts-container').innerHTML = '<div class="alert alert-warning">Could not load posts right now. Please try again later.</div>';
             });
     }
     
@@ -273,7 +323,12 @@ if (!isset($_SESSION["user_id"])) {
             usernameLink.textContent = post.username;
             usernameLink.href = `profile.php?user_id=${post.user_id}`;
             
-            clone.querySelector('.post-content').textContent = post.content;
+            // Format post content with clickable hashtags - add visual styling
+            const postContent = post.content;
+            const contentWithTags = postContent.replace(/#(\w+)/g, 
+                '<a href="?tag=$1" class="hashtag" style="font-weight: 500;">#$1</a>');
+            clone.querySelector('.post-content').innerHTML = contentWithTags;
+            
             clone.querySelector('.post-time').textContent = formatDate(post.created_at);
             clone.querySelector('.kudos-count').textContent = post.kudos_count;
             clone.querySelector('.comments-count').textContent = post.comment_count;
@@ -320,8 +375,13 @@ if (!isset($_SESSION["user_id"])) {
                 kudosBtn.classList.add('btn-primary');
             }
             
-            // Append to container
-            postsContainer.appendChild(clone);
+            // If it's the first page and only one post (new post), prepend it
+            if (currentPage === 1 && posts.length === 1) {
+                postsContainer.insertBefore(clone, postsContainer.firstChild);
+            } else {
+                // Otherwise, append as usual
+                postsContainer.appendChild(clone);
+            }
         });
         
         const loadingIndicator = document.getElementById('loading-indicator');
@@ -381,6 +441,20 @@ if (!isset($_SESSION["user_id"])) {
                 deleteComment(commentId, postId);
             }
         });
+
+        // Check if there's a tag parameter in the URL on page load
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('tag')) {
+            const tag = urlParams.get('tag');
+            document.querySelector('.page-title h2').textContent = `Posts with #${tag}`;
+            document.querySelector('.page-title p').textContent = `Showing posts related to the ${tag} hashtag`;
+            
+            // Show the tag badge
+            document.getElementById('current-tag-badge').textContent = `#${tag}`;
+            
+            // Show the back to main feed button
+            document.getElementById('tag-filter-controls').style.display = 'block';
+        }
     }
     
     // Create a new post
@@ -405,14 +479,11 @@ if (!isset($_SESSION["user_id"])) {
                 // Clear form
                 document.getElementById('post-content').value = '';
                 
-                // Prepend new post
-                const postsContainer = document.getElementById('posts-container');
-                const noPostsMsg = postsContainer.querySelector('.alert');
-                if (noPostsMsg) {
-                    postsContainer.innerHTML = '';
-                }
+                // Reset currentPage to show new posts
+                currentPage = 1;
                 
-                renderPosts([data.post]);
+                // Reload posts to show the latest post first
+                loadPosts(1);
                 
                 // Update stats
                 loadUserStats();
@@ -453,7 +524,7 @@ if (!isset($_SESSION["user_id"])) {
                 // Show empty state if no posts left
                 const postsContainer = document.getElementById('posts-container');
                 if (postsContainer.children.length === 0) {
-                    postsContainer.innerHTML = '<div class="alert alert-info">No posts to display. Be the first to share something!</div>';
+                    postsContainer.innerHTML = '<div class="alert alert-info">No posts to display. Share something first!</div>';
                 }
             } else {
                 console.error('Error deleting post:', data.message);
@@ -561,7 +632,12 @@ if (!isset($_SESSION["user_id"])) {
             usernameLink.textContent = comment.username;
             usernameLink.href = `profile.php?user_id=${comment.user_id}`;
             
-            clone.querySelector('.comment-text').textContent = comment.content;
+            // Format comment with clickable hashtags - with special handling for modal context
+            const commentContent = comment.content;
+            const contentWithTags = commentContent.replace(/#(\w+)/g, 
+                '<a href="?tag=$1" class="hashtag" onclick="closeModalAndNavigate(event, \'$1\');">#$1</a>');
+            clone.querySelector('.comment-text').innerHTML = contentWithTags;
+            
             clone.querySelector('.comment-time').textContent = formatDate(comment.created_at);
             
             // Store comment ID
@@ -602,6 +678,18 @@ if (!isset($_SESSION["user_id"])) {
             // Append to container
             commentsContainer.appendChild(clone);
         });
+    }
+    
+    // Function to close modal and navigate to tag page
+    function closeModalAndNavigate(event, tag) {
+        event.preventDefault();
+        
+        // Get the modal instance and hide it
+        const commentsModal = bootstrap.Modal.getInstance(document.getElementById('commentsModal'));
+        commentsModal.hide();
+        
+        // Navigate to the tag page
+        window.location.href = `?tag=${tag}`;
     }
     
     // Add a new comment
@@ -723,7 +811,7 @@ if (!isset($_SESSION["user_id"])) {
     
     // Delete a comment
     function deleteComment(commentId, postId) {
-        if (!confirm('Är du säker på att du vill ta bort den här kommentaren? Detta kan inte ångras.')) {
+        if (!confirm('Are you sure you want to delete this comment? This action cannot be undone.')) {
             return;
         }
         
@@ -751,16 +839,16 @@ if (!isset($_SESSION["user_id"])) {
                 // Show empty state if no comments left
                 const commentsContainer = document.getElementById('comments-container');
                 if (commentsContainer.children.length === 0) {
-                    commentsContainer.innerHTML = '<div class="alert alert-info">Inga kommentarer än. Var först med att kommentera!</div>';
+                    commentsContainer.innerHTML = '<div class="alert alert-info">No comments yet. Be the first to comment!</div>';
                 }
             } else {
                 console.error('Error deleting comment:', data.error);
-                showError('Kunde inte ta bort kommentaren. Försök igen senare.');
+                showError('Could not delete the comment. Please try again later.');
             }
         })
         .catch(error => {
             console.error('Error deleting comment:', error);
-            showError('Kunde inte ta bort kommentaren. Försök igen senare.');
+            showError('Could not delete the comment. Please try again later.');
         });
     }
 </script>

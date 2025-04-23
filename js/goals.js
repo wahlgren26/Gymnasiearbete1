@@ -1,8 +1,22 @@
-// Data storage models
-let strengthGoals = JSON.parse(localStorage.getItem('strengthGoals') || '[]');
-let measurementGoals = JSON.parse(localStorage.getItem('measurementGoals') || '[]');
-let targetWeight = localStorage.getItem('targetWeight') || null;
-let goalNotes = JSON.parse(localStorage.getItem('goalNotes') || '[]');
+// Get user ID for personalized storage
+function getUserId() {
+    // Get user ID from PHP session via hidden field
+    const userIdField = document.getElementById('current_user_id');
+    if (userIdField && userIdField.value) {
+        return userIdField.value;
+    }
+    
+    // Fallback to a default ID (should not happen in normal usage)
+    return 'default_user';
+}
+
+// Data storage models with user-specific keys
+const userId = getUserId();
+let strengthGoals = JSON.parse(localStorage.getItem(`strengthGoals_${userId}`) || '[]');
+let measurementGoals = JSON.parse(localStorage.getItem(`measurementGoals_${userId}`) || '[]');
+let targetWeight = localStorage.getItem(`targetWeight_${userId}`) || null;
+let goalNotes = JSON.parse(localStorage.getItem(`goalNotes_${userId}`) || '[]');
+let completedGoals = JSON.parse(localStorage.getItem(`completedGoals_${userId}`) || '[]');
 
 // Bootstrap components
 const strengthGoalModal = new bootstrap.Modal(document.getElementById('strengthGoalModal'));
@@ -12,8 +26,19 @@ const editMeasurementGoalModal = new bootstrap.Modal(document.getElementById('ed
 const weightGoalModal = new bootstrap.Modal(document.getElementById('weightGoalModal'));
 const successToast = new bootstrap.Toast(document.getElementById('successToast'));
 
-// Initialize progress chart
-let progressChart;
+// Motivational messages
+const motivationalMessages = [
+    "Keep Going!",
+    "You're Crushing It!",
+    "One Step At A Time!",
+    "Progress Not Perfection!",
+    "You Got This!",
+    "Stay Strong!",
+    "Believe In Yourself!",
+    "Never Give Up!",
+    "Make It Happen!",
+    "Push Your Limits!"
+];
 
 // Helper function to generate unique IDs
 function generateId() {
@@ -29,6 +54,58 @@ function showSuccess(message) {
 // Helper function to update progress bars
 function updateProgressBar(progressBar, percentage) {
     progressBar.style.width = `${Math.min(100, Math.max(0, percentage))}%`;
+}
+
+// Function to update the goals summary section
+function updateGoalsSummary() {
+    // Calculate total active goals
+    const totalGoals = strengthGoals.length + measurementGoals.length + (targetWeight ? 1 : 0);
+    document.getElementById('totalGoalsCount').textContent = totalGoals;
+    
+    // Show completed goals count
+    document.getElementById('completedGoalsCount').textContent = completedGoals.length;
+    
+    // Calculate streak days (days with notes or achievements)
+    const currentDate = new Date();
+    const oneDayInMs = 24 * 60 * 60 * 1000;
+    let streakDays = 0;
+    
+    if (goalNotes.length > 0) {
+        // Sort notes by date in descending order
+        const sortedNotes = [...goalNotes].sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        // Find the most recent note
+        const latestNoteDate = new Date(sortedNotes[0].date);
+        
+        // If the most recent note is from today or yesterday, start counting streak
+        const daysSinceLatestNote = Math.floor((currentDate - latestNoteDate) / oneDayInMs);
+        
+        if (daysSinceLatestNote <= 1) {
+            streakDays = 1; // Start with 1 for the most recent day
+            
+            // Check consecutive days
+            let checkDate = new Date(latestNoteDate);
+            checkDate.setDate(checkDate.getDate() - 1); // Start checking from the day before the latest note
+            
+            for (let i = 1; i < 30; i++) { // Limit to 30 days max
+                const dateString = checkDate.toISOString().split('T')[0];
+                const hasNoteOnDate = sortedNotes.some(note => note.date === dateString);
+                
+                if (hasNoteOnDate) {
+                    streakDays++;
+                    checkDate.setDate(checkDate.getDate() - 1);
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+    
+    document.getElementById('goalStreakDays').textContent = streakDays;
+    
+    // Set random motivational message
+    const randomIndex = Math.floor(Math.random() * motivationalMessages.length);
+    document.getElementById('motivationalMessage').textContent = motivationalMessages[randomIndex];
 }
 
 // Function to render strength goals
@@ -132,8 +209,8 @@ function renderMeasurementGoals() {
 
 // Function to update weight display
 function updateWeightDisplay() {
-    // Get the latest weight from localStorage
-    const weightData = JSON.parse(localStorage.getItem('weightData') || '[]');
+    // Get the latest weight from localStorage - use user-specific key
+    const weightData = JSON.parse(localStorage.getItem(`weightData_${userId}`) || '[]');
     
     if (weightData.length > 0 && targetWeight) {
         const currentWeight = weightData[weightData.length - 1].weight;
@@ -183,42 +260,29 @@ function renderNotes() {
         });
 }
 
-// Function to update the weekly progress chart
-function updateProgressChart() {
-    // Get workout completion data from localStorage (placeholder)
-    // In a real application, this would come from a database
-    const workoutData = JSON.parse(localStorage.getItem('workoutData') || 
-        JSON.stringify([85, 90, 80, 95, 70, 0, 0]));  // Default demo data
-        
-    const ctx = document.getElementById('progressChart').getContext('2d');
-    
-    // Destroy existing chart if it exists
-    if (progressChart) {
-        progressChart.destroy();
-    }
-    
-    // Create new chart
-    progressChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            datasets: [{
-                label: 'Workout Completion',
-                data: workoutData,
-                borderColor: '#0d6efd',
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100
-                }
-            }
-        }
+// Function to update localStorage with userID as a prefix
+function saveToStorage(key, value) {
+    localStorage.setItem(`${key}_${userId}`, value);
+}
+
+// Function to move a goal to completed goals list
+function markGoalAsCompleted(goalType, goal) {
+    // Add to completed goals with timestamp
+    completedGoals.push({
+        id: goal.id,
+        type: goalType,
+        name: goalType === 'strength' ? goal.exercise : goal.name,
+        completedAt: new Date().toISOString()
     });
+    
+    // Save to localStorage
+    saveToStorage('completedGoals', JSON.stringify(completedGoals));
+    
+    // Show success message
+    showSuccess('Goal marked as completed!');
+    
+    // Update goals summary
+    updateGoalsSummary();
 }
 
 // Event Listeners for Strength Goals
@@ -246,8 +310,8 @@ document.getElementById('saveStrengthGoal').addEventListener('click', function()
         target: target
     });
     
-    // Save to localStorage
-    localStorage.setItem('strengthGoals', JSON.stringify(strengthGoals));
+    // Save to localStorage with user ID
+    saveToStorage('strengthGoals', JSON.stringify(strengthGoals));
     
     // Update UI
     renderStrengthGoals();
@@ -271,8 +335,8 @@ document.getElementById('updateStrengthGoal').addEventListener('click', function
         strengthGoals[goalIndex].current = current;
         strengthGoals[goalIndex].target = target;
         
-        // Save to localStorage
-        localStorage.setItem('strengthGoals', JSON.stringify(strengthGoals));
+        // Save to localStorage with user ID
+        saveToStorage('strengthGoals', JSON.stringify(strengthGoals));
         
         // Update UI
         renderStrengthGoals();
@@ -288,8 +352,8 @@ document.getElementById('deleteStrengthGoal').addEventListener('click', function
         // Remove goal
         strengthGoals = strengthGoals.filter(g => g.id !== goalId);
         
-        // Save to localStorage
-        localStorage.setItem('strengthGoals', JSON.stringify(strengthGoals));
+        // Save to localStorage with user ID
+        saveToStorage('strengthGoals', JSON.stringify(strengthGoals));
         
         // Update UI
         renderStrengthGoals();
@@ -323,8 +387,8 @@ document.getElementById('saveMeasurementGoal').addEventListener('click', functio
         target: target
     });
     
-    // Save to localStorage
-    localStorage.setItem('measurementGoals', JSON.stringify(measurementGoals));
+    // Save to localStorage with user ID
+    saveToStorage('measurementGoals', JSON.stringify(measurementGoals));
     
     // Update UI
     renderMeasurementGoals();
@@ -348,8 +412,8 @@ document.getElementById('updateMeasurementGoal').addEventListener('click', funct
         measurementGoals[goalIndex].current = current;
         measurementGoals[goalIndex].target = target;
         
-        // Save to localStorage
-        localStorage.setItem('measurementGoals', JSON.stringify(measurementGoals));
+        // Save to localStorage with user ID
+        saveToStorage('measurementGoals', JSON.stringify(measurementGoals));
         
         // Update UI
         renderMeasurementGoals();
@@ -365,8 +429,8 @@ document.getElementById('deleteMeasurementGoal').addEventListener('click', funct
         // Remove goal
         measurementGoals = measurementGoals.filter(g => g.id !== goalId);
         
-        // Save to localStorage
-        localStorage.setItem('measurementGoals', JSON.stringify(measurementGoals));
+        // Save to localStorage with user ID
+        saveToStorage('measurementGoals', JSON.stringify(measurementGoals));
         
         // Update UI
         renderMeasurementGoals();
@@ -390,9 +454,9 @@ document.getElementById('saveWeightGoal').addEventListener('click', function() {
         return;
     }
     
-    // Save to localStorage
+    // Save to localStorage with user ID
     targetWeight = newTarget;
-    localStorage.setItem('targetWeight', targetWeight);
+    saveToStorage('targetWeight', targetWeight);
     
     // Update UI
     updateWeightDisplay();
@@ -421,8 +485,8 @@ document.getElementById('noteForm').addEventListener('submit', function(e) {
         type: type
     });
     
-    // Save to localStorage
-    localStorage.setItem('goalNotes', JSON.stringify(goalNotes));
+    // Save to localStorage with user ID
+    saveToStorage('goalNotes', JSON.stringify(goalNotes));
     
     // Reset form
     this.reset();
@@ -443,26 +507,32 @@ document.addEventListener('DOMContentLoaded', function() {
     renderMeasurementGoals();
     updateWeightDisplay();
     renderNotes();
-    updateProgressChart();
+    updateGoalsSummary();
     
     // Listen for storage events (for cross-tab updates)
     window.addEventListener('storage', function(e) {
-        if (e.key === 'strengthGoals') {
+        const userId = getUserId();
+        if (e.key === `strengthGoals_${userId}`) {
             strengthGoals = JSON.parse(e.newValue || '[]');
             renderStrengthGoals();
-        } else if (e.key === 'measurementGoals') {
+            updateGoalsSummary();
+        } else if (e.key === `measurementGoals_${userId}`) {
             measurementGoals = JSON.parse(e.newValue || '[]');
             renderMeasurementGoals();
-        } else if (e.key === 'targetWeight') {
+            updateGoalsSummary();
+        } else if (e.key === `targetWeight_${userId}`) {
             targetWeight = e.newValue;
             updateWeightDisplay();
-        } else if (e.key === 'weightData') {
+            updateGoalsSummary();
+        } else if (e.key === `weightData_${userId}`) {
             updateWeightDisplay();
-        } else if (e.key === 'goalNotes') {
+        } else if (e.key === `goalNotes_${userId}`) {
             goalNotes = JSON.parse(e.newValue || '[]');
             renderNotes();
-        } else if (e.key === 'workoutData') {
-            updateProgressChart();
+            updateGoalsSummary();
+        } else if (e.key === `completedGoals_${userId}`) {
+            completedGoals = JSON.parse(e.newValue || '[]');
+            updateGoalsSummary();
         }
     });
 }); 

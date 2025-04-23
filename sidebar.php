@@ -43,6 +43,9 @@
                 <li class="sidebar-item">
                     <a href="protein.php" class="sidebar-link">Protein Calculator</a>
                 </li>
+                <li class="sidebar-item">
+                    <a href="calorie_calculator.php" class="sidebar-link">Calorie Calculator</a>
+                </li>
             </ul>
         </li>
         <li class="sidebar-item">

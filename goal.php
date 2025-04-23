@@ -1,6 +1,12 @@
 <?php
 // Include session handler at the very beginning
 include 'session_handler.php';
+
+// Redirect to login if not logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: auth/signin.php");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,6 +23,9 @@ include 'session_handler.php';
 </head>
 
 <body>
+    <!-- Hidden input to store the current user ID for JavaScript -->
+    <input type="hidden" id="current_user_id" value="<?php echo $_SESSION['user_id']; ?>">
+    
     <div class="wrapper">
 
         <?php include 'sidebar.php'; ?>
@@ -99,11 +108,43 @@ include 'session_handler.php';
                         </div>
                     </div>
 
-                    <!-- Weekly Progress -->
-                    <h2 class="h3 mb-4">Weekly Progress</h2>
+                    <!-- Goals Summary Section -->
                     <div class="card border-0 shadow-sm mb-5">
                         <div class="card-body">
-                            <canvas id="progressChart" height="100"></canvas>
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="lni lni-stats-up fs-2 text-primary me-3"></i>
+                                <h2 class="h3 mb-0">Your Progress Overview</h2>
+                            </div>
+                            <div class="row g-4" id="goalsSummary">
+                                <div class="col-md-3 text-center">
+                                    <div class="p-3 rounded bg-light">
+                                        <i class="lni lni-checkmark-circle fs-1 text-success mb-2"></i>
+                                        <h3 class="h5 mb-1" id="totalGoalsCount">0</h3>
+                                        <p class="text-muted small mb-0">Active Goals</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <div class="p-3 rounded bg-light">
+                                        <i class="lni lni-medal fs-1 text-warning mb-2"></i>
+                                        <h3 class="h5 mb-1" id="completedGoalsCount">0</h3>
+                                        <p class="text-muted small mb-0">Goals Completed</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <div class="p-3 rounded bg-light">
+                                        <i class="lni lni-calendar fs-1 text-info mb-2"></i>
+                                        <h3 class="h5 mb-1" id="goalStreakDays">0</h3>
+                                        <p class="text-muted small mb-0">Day Streak</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <div class="p-3 rounded bg-light">
+                                        <i class="lni lni-star fs-1 text-danger mb-2"></i>
+                                        <h3 class="h5 mb-1" id="motivationalMessage">Keep Going!</h3>
+                                        <p class="text-muted small mb-0">Daily Motivation</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

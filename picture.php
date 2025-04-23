@@ -1,6 +1,12 @@
 <?php
 // Include session handler at the very beginning
 include 'session_handler.php';
+
+// Redirect to login if not logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: auth/signin.php");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -168,10 +174,59 @@ include 'session_handler.php';
         .undo-btn:hover {
             color: #0a58ca;
         }
+        
+        .no-images {
+            padding: 2rem;
+            text-align: center;
+            background: #f8f9fa;
+            border-radius: 0.5rem;
+            color: #6c757d;
+        }
+
+        .image-modal-content {
+            max-width: 90%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+
+        .img-card-container {
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .img-card-container img {
+            transition: transform 0.3s ease;
+        }
+
+        .img-card-container:hover img {
+            transform: scale(1.05);
+        }
+
+        .modal-image-date {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .modal-image-notes {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            color: #212529;
+        }
     </style>
 </head>
 
 <body>
+    <!-- Hidden input to store the current user ID for JavaScript -->
+    <input type="hidden" id="current_user_id" value="<?php echo $_SESSION['user_id']; ?>">
+    
     <div class="wrapper">
 
         <?php include 'sidebar.php'; ?>
@@ -219,56 +274,13 @@ include 'session_handler.php';
                     <div class="progress-gallery">
                         <h2 class="h3 mb-4">Progress Timeline</h2>
                         <div class="row g-4" id="gallery">
-                            <?php
-                            // This would normally come from a database
-                            $sampleImages = [
-                                ['date' => '2024-03-15', 'image' => 'path/to/image1.jpg', 'notes' => 'Starting my journey'],
-                                ['date' => '2024-03-01', 'image' => 'path/to/image2.jpg', 'notes' => 'One month progress'],
-                                // Add more sample entries as needed
-                            ];
-
-                            // Template for new uploads will match this structure
-                            foreach ($sampleImages as $image) {
-                                echo '<div class="col-md-6 col-lg-4">';
-                                echo '<div class="card h-100 shadow-sm">';
-                                echo '<div class="card-img-top position-relative" style="height: 200px; background: #f8f9fa;">';
-                                echo '<img src="' . htmlspecialchars($image['image']) . '" class="w-100 h-100 object-fit-cover" alt="Progress">';
-                                // Add delete button overlay
-                                echo '<button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 delete-btn" 
-                                        onclick="deleteImage(this)">
-                                        <i class="lni lni-trash-can"></i>
-                                      </button>';
-                                echo '</div>';
-                                echo '<div class="card-body">';
-                                echo '<div class="d-flex justify-content-between align-items-center mb-2">';
-                                echo '<h6 class="card-title mb-0">' . date('F j, Y', strtotime($image['date'])) . '</h6>';
-                                echo '<span class="badge bg-primary">' . timeAgo($image['date']) . '</span>';
-                                echo '</div>';
-                                if (!empty($image['notes'])) {
-                                    echo '<p class="card-text small text-muted">' . htmlspecialchars($image['notes']) . '</p>';
-                                }
-                                echo '</div>';
-                                echo '</div>';
-                                echo '</div>';
-                            }
-
-                            function timeAgo($date) {
-                                $timestamp = strtotime($date);
-                                $difference = time() - $timestamp;
-                                
-                                if ($difference < 60) {
-                                    return "Just now";
-                                } elseif ($difference < 3600) {
-                                    return round($difference/60) . "m ago";
-                                } elseif ($difference < 86400) {
-                                    return round($difference/3600) . "h ago";
-                                } elseif ($difference < 2592000) {
-                                    return round($difference/86400) . "d ago";
-                                } else {
-                                    return date('M j', $timestamp);
-                                }
-                            }
-                            ?>
+                            <!-- Images will be loaded here via JavaScript -->
+                        </div>
+                        <!-- No images message -->
+                        <div id="noImages" class="no-images">
+                            <i class="lni lni-gallery fs-1 d-block mb-3"></i>
+                            <h5>No progress pictures yet</h5>
+                            <p>Upload your first picture to start tracking your progress</p>
                         </div>
                     </div>
                 </div>
@@ -282,6 +294,118 @@ include 'session_handler.php';
         crossorigin="anonymous"></script>
     <script src="script.js"></script>
     <script>
+        // Get user ID for personalized storage
+        function getUserId() {
+            // Get user ID from PHP session via hidden field
+            const userIdField = document.getElementById('current_user_id');
+            if (userIdField && userIdField.value) {
+                return userIdField.value;
+            }
+            
+            // Fallback to a default ID (should not happen in normal usage)
+            return 'default_user';
+        }
+        
+        // Load progress pictures from localStorage
+        function loadProgressPictures() {
+            const userId = getUserId();
+            const progressPictures = JSON.parse(localStorage.getItem(`progressPictures_${userId}`) || '[]');
+            const gallery = document.getElementById('gallery');
+            const noImages = document.getElementById('noImages');
+            
+            // Clear existing content
+            gallery.innerHTML = '';
+            
+            // Show "no images" message if there are no pictures
+            if (progressPictures.length === 0) {
+                noImages.classList.remove('d-none');
+                return;
+            }
+            
+            // Hide "no images" message if there are pictures
+            noImages.classList.add('d-none');
+            
+            // Sort by date (newest first)
+            progressPictures.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            // Add each picture to the gallery
+            progressPictures.forEach((picture, index) => {
+                // Använd createdAt istället för date för att beräkna timeAgo
+                const timeAgo = picture.createdAt ? getTimeAgo(picture.createdAt) : getTimeAgo(picture.date);
+                
+                const newItem = document.createElement('div');
+                newItem.className = 'col-md-6 col-lg-4';
+                newItem.innerHTML = `
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-img-top position-relative img-card-container" style="height: 200px; background: #f8f9fa;" data-index="${index}">
+                            <img src="${picture.imageUrl}" class="w-100 h-100 object-fit-cover" alt="Progress">
+                            <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 delete-btn" 
+                                    data-index="${index}">
+                                <i class="lni lni-trash-can"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="card-title mb-0">${new Date(picture.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</h6>
+                                <span class="badge bg-primary">${timeAgo}</span>
+                            </div>
+                            ${picture.notes ? `<p class="card-text small text-muted">${picture.notes}</p>` : ''}
+                        </div>
+                    </div>
+                `;
+                
+                gallery.appendChild(newItem);
+            });
+            
+            // Add event listeners to delete buttons and image containers
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Förhindra att klicket triggar förälder-elementet
+                    const index = parseInt(this.getAttribute('data-index'));
+                    deleteImage(index);
+                });
+            });
+
+            // Lägg till klick-händelser på bilderna för att visa dem i stort format
+            document.querySelectorAll('.img-card-container').forEach(container => {
+                container.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    showImageModal(index);
+                });
+            });
+        }
+        
+        // Function to calculate time ago
+        function getTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            
+            // Kontrollera om datumet är giltigt
+            if (isNaN(date.getTime())) {
+                return "Unknown date";
+            }
+            
+            const difference = now - date;
+            
+            const seconds = Math.floor(difference / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+            const months = Math.floor(days / 30);
+            
+            if (seconds < 60) {
+                return "Just now";
+            } else if (minutes < 60) {
+                return minutes + "m ago";
+            } else if (hours < 24) {
+                return hours + "h ago";
+            } else if (days < 30) {
+                return days + "d ago";
+            } else {
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            }
+        }
+
         // Handle file upload and preview
         const uploadInput = document.querySelector('.upload-input');
         const uploadArea = document.querySelector('.upload-area');
@@ -330,114 +454,186 @@ include 'session_handler.php';
             const notes = this.querySelector('textarea').value;
             const imageUrl = previewImage.src;
             
-            const newItem = document.createElement('div');
-            newItem.className = 'col-md-6 col-lg-4';
-            newItem.innerHTML = `
-                <div class="card h-100 shadow-sm">
-                    <div class="card-img-top position-relative" style="height: 200px; background: #f8f9fa;">
-                        <img src="${imageUrl}" class="w-100 h-100 object-fit-cover" alt="Progress">
-                        <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 delete-btn" 
-                                onclick="deleteImage(this)">
-                            <i class="lni lni-trash-can"></i>
-                        </button>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="card-title mb-0">${new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</h6>
-                            <span class="badge bg-primary">Just now</span>
-                        </div>
-                        ${notes ? `<p class="card-text small text-muted">${notes}</p>` : ''}
-                    </div>
-                </div>
-            `;
-
-            // Add to gallery
-            document.getElementById('gallery').insertBefore(newItem, document.getElementById('gallery').firstChild);
+            if (!date || !imageUrl) {
+                alert('Please select a date and image');
+                return;
+            }
+            
+            // Get existing pictures
+            const userId = getUserId();
+            const progressPictures = JSON.parse(localStorage.getItem(`progressPictures_${userId}`) || '[]');
+            
+            // Add new picture
+            progressPictures.push({
+                date: date,
+                notes: notes,
+                imageUrl: imageUrl,
+                createdAt: new Date().toISOString()
+            });
+            
+            // Save to localStorage
+            localStorage.setItem(`progressPictures_${userId}`, JSON.stringify(progressPictures));
             
             // Reset form and preview
             this.reset();
             preview.classList.add('d-none');
             
+            // Reload pictures
+            loadProgressPictures();
+            
             // Show success message
-            alert('Progress picture uploaded successfully!');
+            showSuccessToast('Progress picture uploaded successfully!');
         });
 
-        // Add these functions for delete functionality
-        let deletedImage = null;
-        let deletedImageHTML = null;
+        // Variables for handling deleted images
+        let deletedPictureIndex = -1;
         let undoToast = null;
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize toast
             undoToast = new bootstrap.Toast(document.getElementById('undoToast'), {
                 delay: 5000
             });
+            
+            // Initialize image modal
+            imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+            
+            // Set today's date as default
+            document.querySelector('input[type="date"]').valueAsDate = new Date();
+            
+            // Load existing pictures
+            loadProgressPictures();
         });
 
-        function deleteImage(button) {
-            // Store the card element and its HTML for potential undo
-            deletedImage = button.closest('.col-md-6');
-            deletedImageHTML = deletedImage.outerHTML;
+        // Delete image function
+        function deleteImage(index) {
+            const userId = getUserId();
+            const progressPictures = JSON.parse(localStorage.getItem(`progressPictures_${userId}`) || '[]');
             
-            // Add fade-out animation
-            deletedImage.style.transition = 'all 0.3s ease';
-            deletedImage.style.opacity = '0';
-            deletedImage.style.transform = 'scale(0.8)';
-            
-            // Remove element after animation
-            setTimeout(() => {
-                deletedImage.remove();
-                // Show undo toast
-                undoToast.show();
-            }, 300);
+            if (index >= 0 && index < progressPictures.length) {
+                // Spara den borttagna bilden
+                const deletedPicture = progressPictures[index];
+                
+                // Spara index för potentiell undo (behövs inte egentligen men behåller för kompatibilitet)
+                deletedPictureIndex = index;
+                
+                // Spara borttagen bild i en separat lista
+                const deletedPictures = JSON.parse(localStorage.getItem(`progressPictures_${userId}_deleted`) || '[]');
+                deletedPictures.push(deletedPicture);
+                localStorage.setItem(`progressPictures_${userId}_deleted`, JSON.stringify(deletedPictures));
+                
+                // Ta bort bilden från huvudlistan
+                progressPictures.splice(index, 1);
+                
+                // Spara uppdaterad lista
+                localStorage.setItem(`progressPictures_${userId}`, JSON.stringify(progressPictures));
+                
+                // Ladda om bilder
+                loadProgressPictures();
+                
+                // Visa undo toast
+                const undoToastEl = document.getElementById('undoToast');
+                if (undoToastEl) {
+                    undoToast.show();
+                }
+            }
         }
 
+        // Undo delete function
         function undoDelete() {
-            if (deletedImageHTML) {
-                // Create temporary container
-                const temp = document.createElement('div');
-                temp.innerHTML = deletedImageHTML;
-                const newElement = temp.firstChild;
+            const userId = getUserId();
+            const deletedPictures = JSON.parse(localStorage.getItem(`progressPictures_${userId}_deleted`) || '[]');
+            
+            if (deletedPictures.length > 0) {
+                // Hämta den senast borttagna bilden
+                const deletedPicture = deletedPictures.pop();
                 
-                // Insert at the same position
-                document.getElementById('gallery').insertBefore(newElement, document.getElementById('gallery').firstChild);
+                // Lägg tillbaka den i huvudlistan
+                const currentPictures = JSON.parse(localStorage.getItem(`progressPictures_${userId}`) || '[]');
+                currentPictures.push(deletedPicture);
                 
-                // Add fade-in animation
-                newElement.style.opacity = '0';
-                newElement.style.transform = 'scale(0.8)';
-                setTimeout(() => {
-                    newElement.style.transition = 'all 0.3s ease';
-                    newElement.style.opacity = '1';
-                    newElement.style.transform = 'scale(1)';
-                }, 50);
+                // Spara båda listorna
+                localStorage.setItem(`progressPictures_${userId}`, JSON.stringify(currentPictures));
+                localStorage.setItem(`progressPictures_${userId}_deleted`, JSON.stringify(deletedPictures));
                 
-                // Clear deleted image data
-                deletedImageHTML = null;
-                deletedImage = null;
+                // Återställ raderat index
+                deletedPictureIndex = -1;
                 
-                // Hide toast
+                // Ladda om bilder
+                loadProgressPictures();
+                
+                // Dölj toast
                 undoToast.hide();
             }
         }
-    </script>
+        
+        // Function to show a success toast
+        function showSuccessToast(message) {
+            const toastEl = document.createElement('div');
+            toastEl.className = 'toast align-items-center text-white bg-success border-0';
+            toastEl.setAttribute('role', 'alert');
+            toastEl.setAttribute('aria-live', 'assertive');
+            toastEl.setAttribute('aria-atomic', 'true');
+            
+            toastEl.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="lni lni-checkmark-circle me-2"></i>
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+            
+            document.querySelector('.toast-container').appendChild(toastEl);
+            
+            const toast = new bootstrap.Toast(toastEl, {
+                delay: 3000,
+                autohide: true
+            });
+            
+            toast.show();
+            
+            // Remove the element after it's hidden
+            toastEl.addEventListener('hidden.bs.toast', function() {
+                toastEl.remove();
+            });
+        }
 
-    <!-- Add confirmation modal -->
-    <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-confirm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title w-100">Delete Progress Picture?</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <p>Are you sure you want to delete this progress picture? This action cannot be undone.</p>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
-                </div>
-            </div>
-        </div>
-    </div>
+        // Lägg till funktionen för att visa bildmodalen
+        function showImageModal(index) {
+            const userId = getUserId();
+            const progressPictures = JSON.parse(localStorage.getItem(`progressPictures_${userId}`) || '[]');
+            
+            if (index >= 0 && index < progressPictures.length) {
+                const picture = progressPictures[index];
+                
+                // Sätt bild och information i modalen
+                document.getElementById('modalImage').src = picture.imageUrl;
+                
+                // Formatera datum
+                const formattedDate = new Date(picture.date).toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                document.getElementById('modalImageDate').textContent = formattedDate;
+                
+                // Visa eller dölj anteckningar
+                const notesElement = document.getElementById('modalImageNotes');
+                if (picture.notes && picture.notes.trim() !== '') {
+                    notesElement.textContent = picture.notes;
+                    notesElement.classList.remove('d-none');
+                } else {
+                    notesElement.classList.add('d-none');
+                }
+                
+                // Visa modalen
+                imageModal.show();
+            }
+        }
+    </script>
 
     <!-- Add toast container for undo -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -447,6 +643,24 @@ include 'session_handler.php';
                 <div>
                     <button class="btn btn-link text-white p-0 me-2 undo-btn" onclick="undoDelete()">Undo</button>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content bg-dark">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center position-relative p-0">
+                    <img id="modalImage" src="" alt="Progress Picture" class="image-modal-content">
+                    <div id="modalImageDate" class="modal-image-date"></div>
+                </div>
+                <div class="modal-footer border-0 justify-content-center">
+                    <div id="modalImageNotes" class="modal-image-notes d-none"></div>
                 </div>
             </div>
         </div>

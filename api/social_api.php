@@ -5,7 +5,7 @@ session_start();
 // Check if the user is logged in
 if (!isset($_SESSION["user_id"])) {
     header('Content-Type: application/json');
-    echo json_encode(['success' => false, 'error' => 'Användaren är inte inloggad']);
+    echo json_encode(['success' => false, 'error' => 'User is not logged in']);
     exit;
 }
 
@@ -37,7 +37,7 @@ if ($method === 'GET') {
             getTrendingTags($conn);
             break;
         default:
-            echo json_encode(['success' => false, 'error' => 'Ogiltig åtgärd']);
+            echo json_encode(['success' => false, 'error' => 'Invalid action']);
             break;
     }
 } elseif ($method === 'POST') {
@@ -61,11 +61,11 @@ if ($method === 'GET') {
             deleteComment($conn);
             break;
         default:
-            echo json_encode(['success' => false, 'error' => 'Ogiltig åtgärd']);
+            echo json_encode(['success' => false, 'error' => 'Invalid action']);
             break;
     }
 } else {
-    echo json_encode(['success' => false, 'error' => 'Ogiltigt HTTP-anrop']);
+    echo json_encode(['success' => false, 'error' => 'Invalid HTTP request']);
 }
 
 /**
@@ -76,10 +76,11 @@ function getPosts($conn) {
     $limit = 10;
     $offset = ($page - 1) * $limit;
     $user_id = $_SESSION['user_id'];
+    $tag = isset($_GET['tag']) ? trim($_GET['tag']) : null;
     
     try {
-        // Get posts with user data, kudos count, and comment count
-        $stmt = $conn->prepare("
+        // Basic SQL query
+        $sql = "
             SELECT p.*, 
                    u.username, 
                    u.profile_image AS profile_picture,
@@ -88,10 +89,25 @@ function getPosts($conn) {
                    (SELECT COUNT(*) FROM kudos WHERE post_id = p.post_id AND user_id = :user_id) AS user_has_kudos
             FROM social_posts p
             JOIN users u ON p.user_id = u.user_id
-            ORDER BY p.created_at DESC
-            LIMIT :limit OFFSET :offset
-        ");
+        ";
+        
+        // Add filtering if a tag is specified
+        if ($tag) {
+            $sql .= " WHERE p.content LIKE :tag_pattern";
+        }
+        
+        // Add sorting and pagination
+        $sql .= " ORDER BY p.created_at DESC LIMIT :limit OFFSET :offset";
+        
+        $stmt = $conn->prepare($sql);
         $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        
+        // Bind tag parameter if it exists
+        if ($tag) {
+            $tag_pattern = "%#" . $tag . "%";
+            $stmt->bindParam(':tag_pattern', $tag_pattern, PDO::PARAM_STR);
+        }
+        
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
@@ -105,7 +121,7 @@ function getPosts($conn) {
         
         echo json_encode(['success' => true, 'posts' => $posts]);
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'error' => 'Fel vid hämtning av inlägg: ' . $e->getMessage()]);
+        echo json_encode(['success' => false, 'error' => 'Error fetching posts: ' . $e->getMessage()]);
     }
 }
 
@@ -116,7 +132,7 @@ function getComments($conn) {
     $post_id = isset($_GET['post_id']) ? (int)$_GET['post_id'] : 0;
     
     if (!$post_id) {
-        echo json_encode(['success' => false, 'error' => 'Inläggs-ID krävs']);
+        echo json_encode(['success' => false, 'error' => 'Post ID is required']);
         return;
     }
     
@@ -127,7 +143,7 @@ function getComments($conn) {
         $stmt->execute();
         
         if ($stmt->rowCount() === 0) {
-            echo json_encode(['success' => false, 'error' => 'Inlägg hittades inte']);
+            echo json_encode(['success' => false, 'error' => 'Post not found']);
             return;
         }
         
@@ -148,7 +164,7 @@ function getComments($conn) {
         
         echo json_encode(['success' => true, 'comments' => $comments]);
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'error' => 'Fel vid hämtning av kommentarer: ' . $e->getMessage()]);
+        echo json_encode(['success' => false, 'error' => 'Error getting comments: ' . $e->getMessage()]);
     }
 }
 
@@ -162,7 +178,7 @@ function createPost($conn) {
     $user_id = $_SESSION['user_id'];
     
     if (empty($content)) {
-        echo json_encode(['success' => false, 'error' => 'Innehåll krävs']);
+        echo json_encode(['success' => false, 'error' => 'Content is required']);
         return;
     }
     
@@ -200,7 +216,7 @@ function createPost($conn) {
         
         echo json_encode(['success' => true, 'post' => $post]);
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'error' => 'Fel vid skapande av inlägg: ' . $e->getMessage()]);
+        echo json_encode(['success' => false, 'error' => 'Error creating post: ' . $e->getMessage()]);
     }
 }
 
@@ -212,7 +228,7 @@ function toggleKudos($conn) {
     $user_id = $_SESSION['user_id'];
     
     if (!$post_id) {
-        echo json_encode(['success' => false, 'error' => 'Inläggs-ID krävs']);
+        echo json_encode(['success' => false, 'error' => 'Post ID is required']);
         return;
     }
     
@@ -223,7 +239,7 @@ function toggleKudos($conn) {
         $stmt->execute();
         
         if ($stmt->rowCount() === 0) {
-            echo json_encode(['success' => false, 'error' => 'Inlägg hittades inte']);
+            echo json_encode(['success' => false, 'error' => 'Post not found']);
             return;
         }
         
@@ -280,7 +296,7 @@ function toggleKudos($conn) {
             'kudos_count' => $kudos_count
         ]);
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'error' => 'Fel vid hantering av kudos: ' . $e->getMessage()]);
+        echo json_encode(['success' => false, 'error' => 'Error handling kudos: ' . $e->getMessage()]);
     }
 }
 
@@ -293,12 +309,12 @@ function addComment($conn) {
     $user_id = $_SESSION['user_id'];
     
     if (!$post_id) {
-        echo json_encode(['success' => false, 'error' => 'Inläggs-ID krävs']);
+        echo json_encode(['success' => false, 'error' => 'Post ID is required']);
         return;
     }
     
     if (empty($content)) {
-        echo json_encode(['success' => false, 'error' => 'Innehåll krävs']);
+        echo json_encode(['success' => false, 'error' => 'Content is required']);
         return;
     }
     
@@ -309,7 +325,7 @@ function addComment($conn) {
         $stmt->execute();
         
         if ($stmt->rowCount() === 0) {
-            echo json_encode(['success' => false, 'error' => 'Inlägg hittades inte']);
+            echo json_encode(['success' => false, 'error' => 'Post not found']);
             return;
         }
         
@@ -341,7 +357,7 @@ function addComment($conn) {
         
         echo json_encode(['success' => true, 'comment' => $comment]);
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'error' => 'Fel vid skapande av kommentar: ' . $e->getMessage()]);
+        echo json_encode(['success' => false, 'error' => 'Error creating comment: ' . $e->getMessage()]);
     }
 }
 
@@ -394,7 +410,7 @@ function getUserStats($conn) {
         
         echo json_encode(['success' => true, 'stats' => $stats]);
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'error' => 'Fel vid hämtning av användarstatistik: ' . $e->getMessage()]);
+        echo json_encode(['success' => false, 'error' => 'Error getting user statistics: ' . $e->getMessage()]);
     }
 }
 
@@ -433,7 +449,7 @@ function getTrendingTags($conn) {
         
         echo json_encode(['success' => true, 'tags' => $tags]);
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'error' => 'Fel vid hämtning av trendande taggar: ' . $e->getMessage()]);
+        echo json_encode(['success' => false, 'error' => 'Error getting trending tags: ' . $e->getMessage()]);
     }
 }
 
@@ -503,7 +519,7 @@ function deleteComment($conn) {
     $user_id = $_SESSION['user_id'];
     
     if (!$comment_id) {
-        echo json_encode(['success' => false, 'error' => 'Kommentars-ID krävs']);
+        echo json_encode(['success' => false, 'error' => 'Comment ID is required']);
         return;
     }
     
@@ -518,7 +534,7 @@ function deleteComment($conn) {
         $stmt->execute();
         
         if ($stmt->rowCount() === 0) {
-            echo json_encode(['success' => false, 'error' => 'Kommentaren hittades inte eller så har du inte behörighet att ta bort den']);
+            echo json_encode(['success' => false, 'error' => 'Comment not found or you are not authorized to delete it']);
             return;
         }
         
@@ -529,6 +545,6 @@ function deleteComment($conn) {
         
         echo json_encode(['success' => true]);
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'error' => 'Fel vid borttagning av kommentar: ' . $e->getMessage()]);
+        echo json_encode(['success' => false, 'error' => 'Error deleting comment: ' . $e->getMessage()]);
     }
 } 
