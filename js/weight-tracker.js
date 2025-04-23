@@ -367,4 +367,4 @@ function deleteEntry(date) {
         loadWeightData();
         showToast('Entry deleted successfully');
     }
-}
+} 

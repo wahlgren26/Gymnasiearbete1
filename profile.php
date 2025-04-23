@@ -215,7 +215,7 @@ try {
             <div class="profile-header">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div class="profile-top d-flex align-items-center">
-                        <img src="<?php echo !empty($user['profile_image']) ? htmlspecialchars($user['profile_image']) : 'MSNexample.png'; ?>" 
+                        <img src="<?php echo !empty($user['profile_image']) ? htmlspecialchars($user['profile_image']) : 'images/default_profile.png'; ?>" 
                              alt="Profile Picture" class="profile-image me-4">
                         <div class="profile-info">
                             <h2><?php echo htmlspecialchars($user['firstname'] . ' ' . $user['lastname']); ?></h2>
@@ -308,6 +308,6 @@ try {
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="script.js"></script>
+<script src="js/script.js"></script>
 </body>
 </html> 
