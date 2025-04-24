@@ -221,7 +221,7 @@ try {
                             <div class="row">
                                 <div class="col-md-4 text-center mb-3 mb-md-0">
                                     <div class="profile-pic-wrapper">
-                                        <img src="<?php echo !empty($user['profile_image']) ? htmlspecialchars($user['profile_image']) : 'images/default_profile.png'; ?>" 
+                                        <img src="<?php echo !empty($user['profile_image']) ? htmlspecialchars($user['profile_image']) : 'assets/img/default-profile.png'; ?>" 
                                              alt="Profile Picture" class="profile-pic mb-3">
                                         <div class="upload-btn-wrapper">
                                             <button type="button" class="btn btn-primary btn-sm" id="uploadBtn"><i class="lni lni-camera"></i></button>

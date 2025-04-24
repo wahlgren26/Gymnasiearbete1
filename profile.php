@@ -215,7 +215,7 @@ try {
             <div class="profile-header">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div class="profile-top d-flex align-items-center">
-                        <img src="<?php echo !empty($user['profile_image']) ? htmlspecialchars($user['profile_image']) : 'images/default_profile.png'; ?>" 
+                        <img src="<?php echo !empty($user['profile_image']) ? htmlspecialchars($user['profile_image']) : 'assets/img/default-profile.png'; ?>" 
                              alt="Profile Picture" class="profile-image me-4">
                         <div class="profile-info">
                             <h2><?php echo htmlspecialchars($user['firstname'] . ' ' . $user['lastname']); ?></h2>
